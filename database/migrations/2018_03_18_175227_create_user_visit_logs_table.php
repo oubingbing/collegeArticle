@@ -16,11 +16,11 @@ class CreateUserVisitLogsTable extends Migration
         Schema::create('user_visit_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->string('nickname')->nullable()->comment('用户微信昵称');
+            $table->string('nickname')->default('')->comment('用户微信昵称');
             $table->bigInteger('user_id')->index()->comment('用户Id');
 
             $table->timestamp('created_at')->nullable()->index();
-            $table->timestamp('updated_at')->nullable()->index();
+            $table->timestamp('updated_at')->nullable();
 
             $table->softDeletes();
         });

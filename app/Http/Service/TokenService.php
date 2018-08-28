@@ -37,7 +37,7 @@ class TokenService
      */
     public function createToken($userInfo,$openId,$appId)
     {
-        if (empty($openId) || empty($userInfo)){
+        if (empty($openId) ){
             throw new ApiException('用户信息不用为空',6000);
         }
 
@@ -67,17 +67,8 @@ class TokenService
      */
     public function accessToken($appId)
     {
-        $weChatApp = WechatApp::query()->find($appId);
-        if(!$weChatApp){
-            throw new ApiException('不是有效的key',6000);
-        }
-
-        if($weChatApp->{WechatApp::FIELD_STATUS} === WechatApp::ENUM_STATUS_TO_BE_AUDIT){
-            throw new ApiException('小程序处于审核中，无法使用后台服务！',6001);
-        }
-
-        $weChatAppId = $weChatApp->{WechatApp::FIELD_APP_KEY};
-        $secret = $weChatApp->{WechatApp::FIELD_APP_SECRET};
+        $weChatAppId = env("WE_CHAT_APP_ID");
+        $secret = env("WE_CHAT_SECRET");
 
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$weChatAppId&secret=$secret";
 
