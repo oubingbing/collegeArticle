@@ -22,8 +22,8 @@ class CreateTravelPlanTable extends Migration
             $table->tinyInteger("status")->default(0)->comment("旅行状态，0=初始状态，1=旅行中");
             $table->tinyInteger("type")->default(1)->comment("类型,1=旅途，2=日常");
 
-            $table->timestamp('created_at')->default('')->index()->comment("该记录创建的时间");
-            $table->timestamp('updated_at')->default('');
+            $table->timestamp('created_at')->nullable()->index()->comment("该记录创建的时间");
+            $table->timestamp('updated_at')->nullable();
             $table->softDeletes();
         });
     }

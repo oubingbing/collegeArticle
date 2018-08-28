@@ -20,8 +20,8 @@ class CreateTravelRelationTable extends Migration
 
             $table->tinyInteger("status")->default(1)->comment("关联的状态，1=关联中，2=关联解除");
 
-            $table->timestamp('created_at')->default('')->index()->comment("该记录创建的时间");
-            $table->timestamp('updated_at')->default('');
+            $table->timestamp('created_at')->nullable()->index()->comment("该记录创建的时间");
+            $table->timestamp('updated_at')->nullable();
             $table->softDeletes();
         });
     }

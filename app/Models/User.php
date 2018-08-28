@@ -71,11 +71,6 @@ class User extends Authenticatable implements JWTSubject
     /** field deleted_at */
     const FIELD_DELETED_AT = 'deleted_at';
 
-    /** 微信用户 */
-    const ENUM_TYPE_WE_CHAT_USER = 1;
-    /** 超级管理员 */
-    const ENUM_TYPE_SUPERVISE = 2;
-
     /** 用户初始状态 */
     const ENUM_STATUS_INIT = 0;
     /** 用户激活状态 */
@@ -143,20 +138,5 @@ class User extends Authenticatable implements JWTSubject
     protected $hidden = [
         'password', 'remember_token',
     ];
-
-    public function college()
-    {
-        return $this->belongsTo(Colleges::class,self::FIELD_ID_COLLEGE);
-    }
-
-    public function profile()
-    {
-        return $this->hasOne(UserProfile::class,UserProfile::FIELD_ID_USER,self::FIELD_ID);
-    }
-
-    public function app()
-    {
-        return $this->belongsTo(WechatApp::class,self::FIELD_ID_APP,WechatApp::FIELD_ID);
-    }
 
 }

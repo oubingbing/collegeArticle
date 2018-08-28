@@ -27,41 +27,12 @@ class IndexController extends Controller
         return $user;
     }
 
-    /**
-     * 搜索
-     *
-     * @author 叶子
-     *
-     * @return mixed
-     * @throws ApiException
-     */
-    public function search()
-    {
-        $user = request()->input('user');
-        $content = request()->input('content');
-        $objType = request()->input('obj_type');
-
-        if(!$content){
-            throw new ApiException('搜索内容不能为空！',500);
-        }
-
-        if(!$objType){
-            throw new ApiException('搜索类型不能为空！',500);
-        }
-
-        switch ($objType){
-            case 1:
-                $result = app(PostService::class)->searchTopic($user,$content);
-                break;
-            case 2:
-                $result = app(SaleFriendService::class)->searchFriend($user,$content);
-                break;
-            default:
-                $result = app(PostService::class)->searchTopic($user,$content);
-                break;
-        }
-
-        return $result;
+    public function recordLocation(){
+        $latitude = request()->input("latitude");
+        $longitude = request()->input("longitude");
+        \DB::table('location_logs')->insert(
+            ['user_id'=>1,'latitude' => $latitude,'longitude'=>$longitude]
+        );
     }
 
     /**

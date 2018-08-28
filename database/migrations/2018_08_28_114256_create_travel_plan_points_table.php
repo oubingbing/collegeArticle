@@ -24,8 +24,8 @@ class CreateTravelPlanPointsTable extends Migration
             $table->tinyInteger("status")->default(0)->comment("状态");
             $table->tinyInteger("type")->default(1)->comment("站点类型，1=起点，2=终点");
 
-            $table->timestamp('created_at')->default('')->index()->comment("该记录创建的时间");
-            $table->timestamp('updated_at')->default('');
+            $table->timestamp('created_at')->nullable()->index()->comment("该记录创建的时间");
+            $table->timestamp('updated_at')->nullable();
             $table->softDeletes();
         });
     }

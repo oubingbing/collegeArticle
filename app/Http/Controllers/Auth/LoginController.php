@@ -94,7 +94,7 @@ class LoginController extends Controller
      *
      * @return mixed
      */
-    public function weChatLogin($userInfo,$code,$appId)
+    public function weChatLogin($userInfo,$code)
     {
 
         $url = $this->weChatLoginUrl.'?appid='.env("WE_CHAT_APP_ID").'&secret='.env("WE_CHAT_SECRET").'&js_code='.$code.'&grant_type=authorization_code';
