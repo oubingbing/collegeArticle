@@ -33,6 +33,7 @@ class IndexController extends Controller
         \DB::table('location_logs')->insert(
             ['user_id'=>1,'latitude' => $latitude,'longitude'=>$longitude]
         );
+        
     }
 
     /**
