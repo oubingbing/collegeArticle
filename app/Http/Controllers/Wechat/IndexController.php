@@ -4,12 +4,9 @@ namespace App\Http\Wechat;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
-use App\Http\Service\PostService;
-use App\Http\Service\SaleFriendService;
 use App\Http\Service\YunPianService;
-use App\Models\SaleFriend;
-use App\Models\User;
-use App\Models\WechatApp;
+use App\Models\LocationLogModel;
+use Carbon\Carbon;
 
 class IndexController extends Controller
 {
@@ -30,10 +27,13 @@ class IndexController extends Controller
     public function recordLocation(){
         $latitude = request()->input("latitude");
         $longitude = request()->input("longitude");
-        \DB::table('location_logs')->insert(
-            ['user_id'=>1,'latitude' => $latitude,'longitude'=>$longitude]
-        );
-        
+
+        LocationLogModel::create([
+            LocationLogModel::FIELD_ID_USER=>1,
+            LocationLogModel::FIELD_LATITUDE=>$latitude,
+            LocationLogModel::FIELD_LONGITUDE=>$longitude,
+            LocationLogModel::FIELD_LOCATE_AT=>Carbon::now()
+        ]);
     }
 
     /**
