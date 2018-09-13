@@ -27,13 +27,6 @@ class IndexController extends Controller
     public function recordLocation(){
         $latitude = request()->input("latitude");
         $longitude = request()->input("longitude");
-
-        LocationLogModel::create([
-            LocationLogModel::FIELD_ID_USER=>1,
-            LocationLogModel::FIELD_LATITUDE=>$latitude,
-            LocationLogModel::FIELD_LONGITUDE=>$longitude,
-            LocationLogModel::FIELD_LOCATE_AT=>Carbon::now()
-        ]);
     }
 
     /**

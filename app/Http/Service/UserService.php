@@ -27,18 +27,17 @@ class UserService
      *
      * @return mixed
      */
-    public function createWeChatUser($openId, $data,$appId)
+    public function createWeChatUser($userInfo)
     {
         $result = User::create([
-            User::FIELD_ID_OPENID => $openId,
-            User::FIELD_ID_APP    => $appId,
-            User::FIELD_NICKNAME  => $data['nickName'],
-            User::FIELD_GENDER    => $data['gender'] ? $data['gender'] : 0,
-            User::FIELD_AVATAR    => $data['avatarUrl'],
-            User::FIELD_CITY      => $data['city'] ? $data['city'] : '无',
-            User::FIELD_COUNTRY   => $data['country'] ? $data['country'] : '无',
-            User::FIELD_PROVINCE  => $data['province'] ? $data['province'] : '无',
-            User::FIELD_LANGUAGE  => $data['language'],
+            User::FIELD_ID_OPENID => $userInfo["openId"],
+            User::FIELD_NICKNAME  => $userInfo['nickName'],
+            User::FIELD_GENDER    => $userInfo['gender'] ? $userInfo['gender'] : 0,
+            User::FIELD_AVATAR    => $userInfo['avatarUrl'],
+            User::FIELD_CITY      => $userInfo['city'] ? $userInfo['city'] : '无',
+            User::FIELD_COUNTRY   => $userInfo['country'] ? $userInfo['country'] : '无',
+            User::FIELD_PROVINCE  => $userInfo['province'] ? $userInfo['province'] : '无',
+            User::FIELD_LANGUAGE  => $userInfo['language'],
             User::FIELD_STATUS    => User::ENUM_STATUS_ACTIVITY
         ]);
 

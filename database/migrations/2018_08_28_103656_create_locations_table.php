@@ -19,7 +19,7 @@ class CreateLocationsTable extends Migration
             $table->bigInteger("user_id")->index()->comment("用户ID");
             $table->string("longitude",32)->default('')->comment("经度");
             $table->string("latitude",32)->default('')->comment("纬度");
-
+            $table->float("speed",2)->default(0)->comment("速度");
             $table->timestamp('locate_at')->nullable()->index()->comment("获取定位的时间");
             $table->timestamp('created_at')->nullable()->index()->comment("该记录创建的时间");
             $table->timestamp('updated_at')->nullable();

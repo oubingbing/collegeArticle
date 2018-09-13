@@ -35,16 +35,12 @@ class TokenService
      * @return mixed
      * @throws Exception
      */
-    public function createToken($userInfo,$openId,$appId)
+    public function createToken($userInfo)
     {
-        if (empty($openId) ){
-            throw new ApiException('用户信息不用为空',6000);
-        }
-
-        $user = User::where(User::FIELD_ID_OPENID,$openId)->where(User::FIELD_ID_APP,$appId)->first();
+        $user = User::where(User::FIELD_ID_OPENID,$userInfo["openId"])->first();
         if(!$user){
             $userLogin = new UserService();
-            $user = $userLogin->createWeChatUser($openId,$userInfo,$appId);
+            $user = $userLogin->createWeChatUser($userInfo);
         }else{
             $user->{User::FIELD_NICKNAME} = $userInfo['nickName'];
             $user->{User::FIELD_AVATAR} = $userInfo['avatarUrl'];

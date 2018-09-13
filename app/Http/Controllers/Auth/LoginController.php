@@ -5,10 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use App\Http\Service\TokenService;
-use App\Models\WechatApp;
+use App\Http\Service\WeChatService;
 use Exception;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -33,7 +32,6 @@ class LoginController extends Controller
      * @var string
      */
     //protected $redirectTo = '/admin';
-    protected $weChatLoginUrl = "https://api.weixin.qq.com/sns/jscode2session";
     protected $tokenService;
 
     /**
@@ -66,17 +64,14 @@ class LoginController extends Controller
      */
     public function apiLogin()
     {
-        $type = request()->input('type');
+        $iv = request()->input('iv');
         $code = request()->input('code');
-        $userInfo = request()->input('user_info');
-        $appId = request()->input('app_id');
+        $encryptedData = request()->input('encrypted_data');
 
         try{
             DB::beginTransaction();
 
-            if($type == 'weChat'){
-                $result = $this->wechatLogin($userInfo,$code,$appId);
-            }
+            $result = $this->wechatLogin($code,$iv,$encryptedData);
 
             DB::commit();
         }catch (Exception $e){
@@ -94,21 +89,11 @@ class LoginController extends Controller
      *
      * @return mixed
      */
-    public function weChatLogin($userInfo,$code)
+    public function weChatLogin($code,$iv,$encryptedData)
     {
-
-        $url = $this->weChatLoginUrl.'?appid='.env("WE_CHAT_APP_ID").'&secret='.env("WE_CHAT_SECRET").'&js_code='.$code.'&grant_type=authorization_code';
-
-        $http = new Client;
-        $response = $http->get($url);
-
-        $result = json_decode((string) $response->getBody(), true);
-        if(!isset($result['openid'])){
-            throw new ApiException('小程序登录失败，请检查您的app_id和app_secret是否正确！',5000);
-        }
-
-        $token = $this->tokenService->createToken($userInfo,$result['openid']);
-
+        $weChatService = new WeChatService();
+        $userInfo = $weChatService->getSessionInfo($code,$iv,$encryptedData);
+        $token = $this->tokenService->createToken($userInfo);
         return $token;
     }
 

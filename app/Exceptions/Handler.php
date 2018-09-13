@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Exception;
 use HttpException;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Logging\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
@@ -68,6 +69,7 @@ class Handler extends ExceptionHandler
     }
 
     public function handle($request, Exception $e){
+
         // 只处理自定义的APIException异常
         if($e instanceof ApiException) {
             $result = [
@@ -75,9 +77,14 @@ class Handler extends ExceptionHandler
                 "error_message" => $e->getMessage(),
                 "data"          => null,
             ];
-            return response()->json($result);
+        }else{
+            $result = [
+                "error_code"    => $e->getCode(),
+                "error_message" => "未知异常",
+                "data"          => null,
+            ];
         }
-        return parent::render($request, $e);
+        return response()->json($result);
     }
 
 }
