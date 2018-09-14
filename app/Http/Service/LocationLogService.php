@@ -29,6 +29,7 @@ class LocationLogService
 
         $result = LocationLog::create([
             LocationLog::FIELD_ID_USER=>$userId,
+            LocationLog::FIELD_ID_PLAN=>$locationDTO->getPlanId(),
             LocationLog::FIELD_LATITUDE=>$locationDTO->getLatitude(),
             LocationLog::FIELD_LONGITUDE=>$locationDTO->getLongitude(),
             LocationLog::FIELD_SPEED=>$locationDTO->getSpeed(),

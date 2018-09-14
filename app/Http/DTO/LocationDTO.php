@@ -9,10 +9,27 @@ namespace App\Http\DTO;
  */
 class LocationDTO
 {
+    private $planId;
     private $latitude;
     private $longitude;
     private $speed;
     private $date;
+
+    /**
+     * @return mixed
+     */
+    public function getPlanId()
+    {
+        return $this->planId;
+    }
+
+    /**
+     * @param mixed $planId
+     */
+    public function setPlanId($planId)
+    {
+        $this->planId = $planId;
+    }
 
     /**
      * @return mixed

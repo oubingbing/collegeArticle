@@ -35,6 +35,8 @@ $api->version('v1', function ($api) {
 
             /** 获取旅途 */
             $api->get('/plan',TravelController::class . '@userPlan');
+
+            $api->get("/location",LocationController::class . "@planLocation");
         });
 
     });

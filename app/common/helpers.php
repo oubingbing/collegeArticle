@@ -80,3 +80,30 @@ if( ! function_exists('sendMessage') ){
         dispatch($job)->onQueue('send_message');
     }
 }
+
+if(!function_exists("paginate")){
+    function paginate($query, $pageParams, $columns = null, $map = null){
+        if ($columns === null || !is_array($columns)) {
+            $columns = ['*'];
+        }
+
+        $perPage     = $pageParams['page_size'] ? $pageParams['page_size'] : 10;
+        $currentPage = $pageParams['page_number'] ? $pageParams['page_number'] : 1;
+
+        $result = $query->paginate($perPage, $columns, null, $currentPage);
+        $items  = $result->getCollection();
+        if ($map != null) {
+            $items = $items->map($map);
+        }
+
+        return [
+            'page'      => [
+                'size'        => $perPage,
+                'number'      => $currentPage,
+                'total-pages' => $result->lastPage(),
+                'total_items' => $result->total(),
+            ],
+            'page_data' => $items
+        ];
+    }
+}

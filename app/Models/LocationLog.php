@@ -20,6 +20,8 @@ class LocationLog extends Model
 
     const FIELD_ID_USER = "user_id";
 
+    const FIELD_ID_PLAN = "plan_id";
+
     const FIELD_LONGITUDE = "longitude";
 
     const FIELD_LATITUDE = "latitude";
@@ -40,6 +42,7 @@ class LocationLog extends Model
 
     protected $fillable = [
         self::FIELD_ID,
+        self::FIELD_ID_PLAN,
         self::FIELD_ID_USER,
         self::FIELD_LONGITUDE,
         self::FIELD_LATITUDE,

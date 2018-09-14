@@ -17,6 +17,7 @@ class CreateLocationsTable extends Migration
             $table->bigIncrements('id');
 
             $table->bigInteger("user_id")->index()->comment("用户ID");
+            $table->bigInteger("plan_id")->index()->comment("旅行计划ID");
             $table->string("longitude",32)->default('')->comment("经度");
             $table->string("latitude",32)->default('')->comment("纬度");
             $table->float("speed",2)->default(0)->comment("速度");
