@@ -8,10 +8,6 @@
 
 namespace App\Http\Service;
 
-
-use App\Models\RunStep;
-use App\Models\TravelLog;
-use App\Models\TravelLogPoi;
 use App\Models\TravelPlan;
 use App\Models\TravelPlanPoint;
 use Carbon\Carbon;
@@ -20,13 +16,21 @@ class TravelService
 {
     protected $builder;
 
+    /**
+     * 新建旅途
+     *
+     * @param $userId
+     * @param $title
+     * @param $distance
+     * @return mixed
+     */
     public function saveTravelPlan($userId,$title,$distance)
     {
         $plan = TravelPlan::create([
             TravelPlan::FIELD_ID_USER=>$userId,
             TravelPlan::FIELD_TITLE=>empty($title)?'无':$title,
             TravelPlan::FIELD_DISTANCE=>$distance,
-            TravelPlan::FIELD_STATUS=>TravelPlan::ENUM_STATUS_TRAVeLING
+            TravelPlan::FIELD_STATUS=>TravelPlan::ENUM_STATUS_TRAVELING
         ]);
 
         return $plan;
@@ -71,6 +75,50 @@ class TravelService
         }
 
         return $planArray;
+    }
+
+    /**
+     * 获取用户的旅途计划
+     *
+     * @author yezi
+     * @param $userId
+     * @return \Illuminate\Database\Eloquent\Model|null|static
+     */
+    public function getTravelingPlan($userId)
+    {
+        $travelPlan = TravelPlan::query()
+            ->select([TravelPlan::FIELD_ID,TravelPlan::FIELD_DISTANCE,TravelPlan::FIELD_TITLE,TravelPlan::FIELD_STATUS,TravelPlan::FIELD_CREATED_AT])
+            ->where(TravelPlan::FIELD_ID_USER,$userId)
+            ->where(TravelPlan::FIELD_STATUS,'!=',TravelPlan::ENUM_STATUS_END)
+            ->first();
+
+        return $travelPlan;
+    }
+
+    /**
+     * 获取旅行计划的站点
+     *
+     * @author yezi
+     * @param $planId
+     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     */
+    public function planPoints($planId)
+    {
+        $points = TravelPlanPoint::query()
+            ->select([
+                TravelPlanPoint::FIELD_ID,
+                TravelPlanPoint::FIELD_ID_TRAVEL_PLAN,
+                TravelPlanPoint::FIELD_LONGITUDE,
+                TravelPlanPoint::FIELD_LATITUDE,
+                TravelPlanPoint::FIELD_ADDRESS,
+                TravelPlanPoint::FIELD_ADDRESS_DETAIL,
+                TravelPlanPoint::FIELD_SORT,
+                TravelPlanPoint::FIELD_CREATED_AT
+            ])
+            ->where(TravelPlanPoint::FIELD_ID_TRAVEL_PLAN,$planId)
+            ->get();
+
+        return $points;
     }
 
 }

@@ -30,8 +30,11 @@ $api->version('v1', function ($api) {
             /** 登录 */
             $api->post('/location', LocationController::class . '@saveLocation');
 
-            /** 步数数据 */
-            $api->post('/create_travel_plan',TravelController::class . '@createTravelPlan');
+            /** 创建旅途 */
+            $api->post('/plan',TravelController::class . '@createTravelPlan');
+
+            /** 获取旅途 */
+            $api->get('/plan',TravelController::class . '@userPlan');
         });
 
     });

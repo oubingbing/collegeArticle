@@ -65,4 +65,19 @@ class TravelController extends Controller
         return $travel;
     }
 
+    public function userPlan()
+    {
+        $user = request()->input('user');
+
+        $plan = $this->travelService->getTravelingPlan($user->id);
+        if(!$plan){
+            return $plan;
+        }
+
+        $planPoints = $this->travelService->planPoints($plan->id);
+        $plan->points = $planPoints;
+
+        return $plan;
+    }
+
 }
