@@ -67,6 +67,7 @@ class LocationController extends Controller
                 LocationLog::FIELD_LOCATE_AT
             ])
             ->where(LocationLog::FIELD_ID_PLAN,$plan->id)
+            ->orderBy(LocationLog::FIELD_LOCATE_AT,"desc")
             ->get();
 
         return $locationLogs;
