@@ -3,6 +3,8 @@
 use App\Events\Chat;
 use Illuminate\Support\Facades\Redis;
 
+Route::get('/test_edit','Admin\IndexController@test');
+
 
 Route::get('/', function () {
     return view('gateway.home');

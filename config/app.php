@@ -167,7 +167,8 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         Sentry\SentryLaravel\SentryLaravelServiceProvider::class,
-
+        Chenhua\MarkdownEditor\MarkdownEditorServiceProvider::class,
+        YuanChao\Editor\EndaEditorServiceProvider::class,
         /*
          * Package Service Providers...
          */
@@ -232,7 +233,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Sentry' => Sentry\SentryLaravel\SentryFacade::class,
-
+        'MarkdownEditor' => Chenhua\MarkdownEditor\Facades\MarkdownEditor::class,
+        'EndaEditor' => YuanChao\Editor\Facade\EndaEditorFacade::class
     ],
 
 ];

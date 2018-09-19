@@ -45,4 +45,8 @@ class IndexController extends Controller
         return webResponse('ok',200,$token);
     }
 
+    public function test(){
+        return view("test.edit");
+    }
+
 }

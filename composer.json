@@ -18,7 +18,9 @@
         "sentry/sentry-laravel": "^0.8.0",
         "tymon/jwt-auth": "1.0.0-rc.1",
         "workerman/gateway-worker": "^3.0",
-        "workerman/gatewayclient": "^3.0"
+        "workerman/gatewayclient": "^3.0",
+        "chenhua/laravel5-markdown-editor": "~1.0",
+        "yuanchao/laravel-5-markdown-editor": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "~2.0",
