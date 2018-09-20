@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Service\QiNiuService;
+use App\Models\CollegeArticle;
 
 class IndexController extends Controller
 {
@@ -46,7 +47,10 @@ class IndexController extends Controller
     }
 
     public function test(){
-        return view("test.edit");
+        $result = CollegeArticle::find(13);
+
+        //$result->{CollegeArticle::FIELD_CONTENT} = MarkdownEditor::parse($result->{CollegeArticle::FIELD_CONTENT});
+        return view("test.edit",["name"=>$result->{CollegeArticle::FIELD_CONTENT}]);
     }
 
 }

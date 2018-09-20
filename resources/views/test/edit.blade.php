@@ -2,6 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="utf-8" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>图片上传示例 - Editor.md examples</title>
     <link rel="stylesheet" href="{{asset('css/markdown/style.css')}}" />
     <link rel="stylesheet" href="{{asset('css/markdown/editormd.css')}}" />
@@ -14,7 +15,7 @@
         <p>Image upload example</p>
     </header>
     <div id="test-editormd">
-                <textarea style="display:none;">#### Settings
+                <textarea id="article" style="display:none;">#### Settings
 
 ```javascript
 {
@@ -33,12 +34,34 @@
     url     : "图片地址"        // 上传成功时才返回
 }
 ```</textarea>
+        {{ csrf_field() }}
+    </div>
+    <button type="button" class="btn-default" id="submit">提交</button>
+</div>
+
+<div class="panel-body">
+    <!-- 用于显示md编辑器的md格式 -->
+    <div id="doc-content">
+        <textarea style="display: none;">{{$name}}}</textarea>
     </div>
 </div>
 <script src="{{asset('js/markdown/jquery.min.js')}}"></script>
 <script src="{{asset('js/markdown/editormd.js')}}"></script>
 <script type="text/javascript">
     $(function() {
+
+        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+
+        testEditor = editormd("doc-content", {//注意：这里是上面DIV的id
+            htmlDecode : "style,script,iframe",
+            emoji : true,
+            taskList : true,
+            tex : true, // 默认不解析
+            flowChart : true, // 默认不解析
+            sequenceDiagram : true, // 默认不解析
+            codeFold : true
+        });
+
         var testEditor = editormd("test-editormd", {
             width: "90%",
             height: 640,
@@ -61,6 +84,15 @@
              url     : "图片地址"        // 上传成功时才返回
              }
              */
+        });
+
+        $("#submit").on("click",function () {
+            var content = $("#article").val();
+            console.log("内容："+content);
+
+            $.post("/article/create",{content:content},function(result){
+                console.log(result)
+            },'json');
         });
     });
 </script>

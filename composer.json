@@ -7,7 +7,9 @@
     "require": {
         "php": ">=7.0.0",
         "barryvdh/laravel-ide-helper": "^2.4",
+        "chenhua/laravel5-markdown-editor": "~1.0",
         "dingo/api": "2.0.0-alpha1",
+        "erusev/parsedown": "^1.7",
         "fideloper/proxy": "~3.3",
         "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.5.*",
@@ -17,10 +19,7 @@
         "qiniu/php-sdk": "^7.2",
         "sentry/sentry-laravel": "^0.8.0",
         "tymon/jwt-auth": "1.0.0-rc.1",
-        "workerman/gateway-worker": "^3.0",
-        "workerman/gatewayclient": "^3.0",
-        "chenhua/laravel5-markdown-editor": "~1.0",
-        "yuanchao/laravel-5-markdown-editor": "dev-master"
+        "workerman/gateway-worker": "^3.0"
     },
     "require-dev": {
         "filp/whoops": "~2.0",

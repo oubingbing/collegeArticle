@@ -12,6 +12,7 @@
 */
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Wechat\CollegeArticleController;
 use App\Http\Wechat\LocationController;
 use App\Http\Wechat\TravelController;
 
@@ -37,6 +38,8 @@ $api->version('v1', function ($api) {
             $api->get('/plan',TravelController::class . '@userPlan');
 
             $api->get("/location",LocationController::class . "@planLocation");
+
+            $api->get("/article",CollegeArticleController::class . "@article");
         });
 
     });

@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Redis;
 
 Route::get('/test_edit','Admin\IndexController@test');
 
+Route::post("/article/create",'CollegeArticle\ArticleController@create');
+
+Route::post("/article",'CollegeArticle\ArticleController@getArticle');
 
 Route::get('/', function () {
     return view('gateway.home');
