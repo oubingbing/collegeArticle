@@ -97,12 +97,15 @@
                     封面
                 </label>
                 <div class="layui-input-inline">
-                    <div v-if="image.show" class="delete-container" style="display: none">
-                        <img style="width: 25px;height: 25px;" src="" alt="">
+                    <div class="image-container">
+                        <div class="delete-container" style="display: none;">
+                            <img id="delete-cover" style="width: 25px;height: 25px;" src="{{asset('images/delete.png')}}" alt="">
+                        </div>
+                        <img src="" id="img-cover">
                     </div>
-                    <img src="" id="img-cover">
                     <div>
                         <div class="upload-button upload-none" onclick="javascript:$('#cover-picture').click()">上传封面</div>
+                        <div class="upload-button upload-success" style="display: none" onclick="javascript:$('#cover-picture').click()">上传成功</div>
                     </div>
                     <input type="file" id="cover-picture" style="display: none" class="layui-input"/>
                 </div>
@@ -161,13 +164,36 @@
             var file = this.files[0];
             //console.log($("#img-cover").attr("src"));
             uploadPicture(file,function (res) {
-                $("#img-cover").attr("src",IMAGE_URL+res.key)
+                $("#img-cover").attr("src",IMAGE_URL+res.key);
+                $(".upload-success").css("display","");
+                $(".upload-none").css("display","none");
             },function (res) {
                 var total = res.total;
                 console.log(total)
             },function (res) {
                 console.log("出错了")
             },ZONE);
+        })
+
+        /**
+         * 监听封面图片的删除icon
+         */
+        $(".image-container").on({
+            mouseover : function(){
+                if($("#img-cover").attr("src") != ''){
+                    $(".delete-container").css("display","");
+                }
+            } ,
+            mouseout : function(){
+                $(".delete-container").css("display","none");
+            }
+        });
+
+        $("#delete-cover").on('click',function () {
+            $("#img-cover").attr("src","");
+            $(".delete-container").css("display","none");
+            $(".upload-none").css("display","");
+            $(".upload-success").css("display","none");
         })
 
     });
