@@ -89,7 +89,7 @@
                     标题
                 </label>
                 <div class="layui-input-inline">
-                    <input type="text" lay-verify="required" class="layui-input" style="width: 500px">
+                    <input type="text" class="layui-input" style="width: 500px">
                 </div>
             </div>
             <div class="article-item picture-item">
@@ -110,15 +110,11 @@
                     <input type="file" id="cover-picture" style="display: none" class="layui-input"/>
                 </div>
             </div>
-            <div >
-                <label for="username">
-                    编辑框
-                </label>
-            </div>
         </header>
         <div id="editormd">
             <textarea id="article" style="display:none;"></textarea>
         </div>
+        <header><button class="layui-btn layui-btn-info">提交</button></header>
     </div>
 
 </div>
@@ -132,7 +128,7 @@
     const token = "{{$token}}";
     const IMAGE_URL = 'http://article.qiuhuiyi.cn/';
     const ZONE = "z2";
-    //var token = 'dJVFK8ibSzHKWhcVOupqzn22EKJ9QXqjLIqqDsqn:YdK1rl_IFEoWHBUImVu-vkhIzHo=:eyJzY29wZSI6ImJlYXV0aWZ1bC1waWN0dXJlIiwicmV0dXJuQm9keSI6IntcImtleVwiOlwiJChrZXkpXCIsXCJoYXNoXCI6XCIkKGV0YWcpXCIsXCJidWNrZXRcIjpcIiQoYnVja2V0KVwiLFwiZnNpemVcIjokKGZzaXplKSxcIndpZHRoXCI6XCIkKGltYWdlSW5mby53aWR0aClcIixcImhlaWdodFwiOlwiJChpbWFnZUluZm8uaGVpZ2h0KVwifSIsImRlYWRsaW5lIjoxNTM3NjAwMTcwfQ==';
+
     $(function() {
         $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
 
@@ -160,6 +156,9 @@
              */
         });
 
+        /**
+         * 监听图片上传
+         **/
         $("#cover-picture").unbind("change").bind("change",function(){
             var file = this.files[0];
             //console.log($("#img-cover").attr("src"));
@@ -173,7 +172,7 @@
             },function (res) {
                 console.log("出错了")
             },ZONE);
-        })
+        });
 
         /**
          * 监听封面图片的删除icon
@@ -194,6 +193,7 @@
             $(".delete-container").css("display","none");
             $(".upload-none").css("display","");
             $(".upload-success").css("display","none");
+            layer.msg("封面已移除");
         })
 
     });
