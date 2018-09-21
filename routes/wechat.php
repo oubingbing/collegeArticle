@@ -28,16 +28,6 @@ $api->version('v1', function ($api) {
         });
 
         $api->group(['middleware' => 'wechat'], function ($api) {
-            /** 登录 */
-            $api->post('/location', LocationController::class . '@saveLocation');
-
-            /** 创建旅途 */
-            $api->post('/plan',TravelController::class . '@createTravelPlan');
-
-            /** 获取旅途 */
-            $api->get('/plan',TravelController::class . '@userPlan');
-
-            $api->get("/location",LocationController::class . "@planLocation");
 
             $api->get("/article",CollegeArticleController::class . "@article");
         });
