@@ -17,9 +17,6 @@ class CreateUsersTable extends Migration
             $table->bigIncrements('id');
 
             $table->string('nickname')->comment('用户微信昵称');
-            $table->string('password')->default('')->comment('预留账号密码');
-            $table->string('mobile')->default('')->index()->comment('预留手机号码字段');
-
             $table->string('avatar')->default('')->comment('微信头像');
             $table->tinyInteger('gender')->default(0)->comment('默认一个性别');
             $table->string('open_id')->unique()->default('')->index();

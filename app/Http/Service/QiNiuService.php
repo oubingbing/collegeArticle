@@ -9,6 +9,9 @@
 namespace App\Http\Service;
 
 
+use App\Exceptions\ApiException;
+use App\Models\QiNiuTokenModel;
+use Carbon\Carbon;
 use Qiniu\Auth;
 
 class QiNiuService
@@ -18,6 +21,8 @@ class QiNiuService
     protected $secretKey;
     protected $bucket;
     protected $baseUrl;
+
+    const EXPIRED_AT = 3600 * 24;
 
     public function __construct()
     {
@@ -29,6 +34,41 @@ class QiNiuService
         $this->auth = new Auth($this->accessKey, $this->secretKey);
     }
 
+    public function getToken()
+    {
+        $qiNiuToken = QiNiuTokenModel::query()->orderBy(QiNiuTokenModel::FIELD_CREATED_AT,'DESC')->first();
+        if($qiNiuToken){
+            if(Carbon::parse($qiNiuToken->{QiNiuTokenModel::FIELD_EXPIRED_AT})->lt(Carbon::now())){
+                $token = $qiNiuToken->{QiNiuTokenModel::FIELD_EXPIRED_AT};
+            }else{
+                $token = $this->uploadToken();
+                if(!$token){
+                    throw new ApiException("获取七牛token出错",500);
+                }
+                $qiNiuToken->{QiNiuTokenModel::FIELD_TOKEN} = $token;
+                $qiNiuToken->{QiNiuTokenModel::FIELD_EXPIRED_AT} = Carbon::now()->addSecond(self::EXPIRED_AT);
+                $updateResult = $qiNiuToken->save();
+                if(!$updateResult){
+                    throw new ApiException("更新七牛token失败",500);
+                }
+            }
+        }else{
+            $token = $this->uploadToken();
+            if(!$token){
+                throw new ApiException("获取七牛token出错",500);
+            }
+            $createResult = QiNiuTokenModel::create([
+                QiNiuTokenModel::FIELD_TOKEN=>$token,
+                QiNiuTokenModel::FIELD_EXPIRED_AT=>Carbon::now()->addSecond(self::EXPIRED_AT)
+            ]);
+            if(!$createResult){
+                throw new ApiException("保存七牛token失败",500);
+            }
+        }
+
+        return $token;
+    }
+
     /**
      * 获取七牛上传凭证
      *
@@ -36,9 +76,12 @@ class QiNiuService
      *
      * @return string
      */
-    public function uploadToken()
+    private function uploadToken()
     {
-        $token = $this->auth->uploadToken($this->bucket);
+        $expireSeconds = self::EXPIRED_AT;
+        $policy['returnBody'] = '{"key":"$(key)","hash":"$(etag)","bucket":"$(bucket)","fsize":$(fsize),"width":"$(imageInfo.width)","height":"$(imageInfo.height)"}';
+
+        $token = $this->auth->uploadToken($this->bucket,null,$expireSeconds,$policy);
 
         return $token;
     }

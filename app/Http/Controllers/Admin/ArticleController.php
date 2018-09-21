@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\CollegeArticle;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Service\QiNiuService;
 use App\Models\CollegeArticle;
 use Illuminate\Support\Facades\Request;
 
@@ -14,6 +15,13 @@ use Illuminate\Support\Facades\Request;
  */
 class ArticleController extends Controller
 {
+    public function createView()
+    {
+        $token = app(QiNiuService::class)->getToken();
+
+        return view("admin.article.create",["token"=>$token]);
+    }
+
     public function create(){
         $content = request()->input("content");
 

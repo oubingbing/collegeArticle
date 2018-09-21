@@ -76,14 +76,9 @@ class Handler extends ExceptionHandler
                 "error_message" => $e->getMessage(),
                 "data"          => null,
             ];
-        }else{
-            $result = [
-                "error_code"    => $e->getCode(),
-                "error_message" => $e->getMessage(),
-                "data"          => null,
-            ];
+            return response()->json($result);
         }
-        return response()->json($result);
+        return parent::render($request, $e);
     }
 
 }

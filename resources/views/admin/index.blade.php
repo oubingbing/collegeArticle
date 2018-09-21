@@ -4,13 +4,13 @@
 <body>
     <!-- 顶部开始 -->
     <div class="container">
-        <div class="logo"><a href="./index.html">{{$app->name}} - 后台管理</a></div>
+        <div class="logo"><a href="./index.html">大学灯塔 - 后台管理</a></div>
         <div class="left_open">
             <i title="展开左侧栏" class="iconfont">&#xe699;</i>
         </div>
         <ul class="layui-nav right" lay-filter="">
           <li class="layui-nav-item">
-            <a href="javascript:;">{{$user->username}}</a>
+            <a href="javascript:;">叶子</a>
             <dl class="layui-nav-child"> <!-- 二级菜单 -->
               <dd><a href="{{asset('logout')}}">退出</a></dd>
             </dl>
@@ -28,94 +28,15 @@
             <li>
                 <a href="javascript:;">
                     <i class="iconfont">&#xe6b8;</i>
-                    <cite>会员</cite>
+                    <cite>文章</cite>
                     <i class="iconfont nav_right">&#xe697;</i>
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a _href="{{ asset('admin/user/index') }}">
+                        <a _href="{{ asset('admin/article/create') }}">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>会员列表</cite>
+                            <cite>新建文章</cite>
                             
-                        </a>
-                    </li >
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:;">
-                    <i class="iconfont">&#xe696;</i>
-                    <cite>表白墙</cite>
-                    <i class="iconfont nav_right">&#xe697;</i>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a _href="{{ asset('admin/post/index') }}">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>表白列表</cite>
-                        </a>
-                    </li >
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:;">
-                    <i class="iconfont">&#xe696;</i>
-                    <cite>卖舍友</cite>
-                    <i class="iconfont nav_right">&#xe697;</i>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a _href="">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>帖子列表</cite>
-
-                        </a>
-                    </li >
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:;">
-                    <i class="iconfont">&#xe696;</i>
-                    <cite>暗恋匹配</cite>
-                    <i class="iconfont nav_right">&#xe697;</i>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a _href="">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>帖子列表</cite>
-
-                        </a>
-                    </li >
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:;">
-                    <i class="iconfont">&#xe6b8;</i>
-                    <cite>话题讨论</cite>
-                    <i class="iconfont nav_right">&#xe697;</i>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a _href="{{ asset('admin/topic') }}">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>话题列表</cite>
-
-                        </a>
-                    </li >
-                </ul>
-            </li>
-            <li>
-                <a href="javascript:;">
-                    <i class="iconfont">&#xe696;</i>
-                    <cite>微信消息模板</cite>
-                    <i class="iconfont nav_right">&#xe697;</i>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a _href="{{ asset('admin/templates_index') }}">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>模板列表</cite>
-
                         </a>
                     </li >
                 </ul>
@@ -152,7 +73,7 @@
         $("#logout-button").on("click",function(){
             $.post("{{asset('/logout')}}", {}, function (res) {
                 console.log(res);
-                window.location.href = "{{route('login')}}";
+                //window.location.href = 'login';
             });
         });
     });

@@ -26,10 +26,10 @@ class IndexController extends Controller
      */
     public function index()
     {
-        $user = request()->get('user');
-        $app = $user->app();
+        //$user = request()->get('user');
+        //$app = $user->app();
 
-        return view('admin.index',['user'=>$user,'app'=>$app]);
+        return view('admin.index');
     }
 
     /**
@@ -41,7 +41,7 @@ class IndexController extends Controller
      */
     public function getUploadToken()
     {
-        $token = app(QiNiuService::class)->uploadToken();
+        $token = app(QiNiuService::class)->getToken();
 
         return webResponse('ok',200,$token);
     }
