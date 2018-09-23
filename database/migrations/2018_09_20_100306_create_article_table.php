@@ -18,7 +18,7 @@ class CreateArticleTable extends Migration
 
             $table->bigInteger("poster_id")->index()->comment("发表人");
             $table->string('title')->default("")->comment("标题");
-            $table->string("cover_image")->default("")->comment("文章封面图片");
+            $table->jsonb("cover_image")->nullable()->comment("文章封面图片");
             $table->longText("content")->comment("文章内容");
 
             $table->tinyInteger("type")->default(1)->comment("类型");

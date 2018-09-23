@@ -30,6 +30,8 @@ $api->version('v1', function ($api) {
         $api->group(['middleware' => 'wechat'], function ($api) {
 
             $api->get("/article",CollegeArticleController::class . "@article");
+
+            $api->get("/article/{id}",CollegeArticleController::class . "@detail");
         });
 
     });

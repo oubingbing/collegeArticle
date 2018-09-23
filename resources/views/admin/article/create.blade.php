@@ -89,7 +89,7 @@
                     标题
                 </label>
                 <div class="layui-input-inline">
-                    <input type="text" class="layui-input" style="width: 500px">
+                    <input id="title" type="text" class="layui-input" style="width: 500px">
                 </div>
             </div>
             <div class="article-item picture-item">
@@ -114,7 +114,7 @@
         <div id="editormd">
             <textarea id="article" style="display:none;"></textarea>
         </div>
-        <header><button class="layui-btn layui-btn-info">提交</button></header>
+        <header><button class="layui-btn layui-btn-info" id="submit">提交</button></header>
     </div>
 
 </div>
@@ -126,7 +126,7 @@
 <script type="text/javascript" src="{{ asset('js/xadmin.js') }}"></script>
 <script type="text/javascript">
     const token = "{{$token}}";
-    const IMAGE_URL = 'http://article.qiuhuiyi.cn/';
+    const IMAGE_URL = "{{env('QI_NIU_DOMAIN')}}";
     const ZONE = "z2";
 
     $(function() {
@@ -144,16 +144,17 @@
             //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为 #fff
             imageUpload : true,
             imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-            imageUploadURL : "./php/upload.php?test=dfdf",
+            imageUploadURL : "{{asset('/admin/article/image_upload')}}",
+        });
 
-            /*
-             上传的后台只需要返回一个 JSON 数据，结构如下：
-             {
-             success : 0 | 1,           // 0 表示上传失败，1 表示上传成功
-             message : "提示的信息，上传成功或上传失败及错误信息等。",
-             url     : "图片地址"        // 上传成功时才返回
-             }
-             */
+        $("#submit").on('click',function () {
+            var title = $("#title").val();
+            var content = $("#article").val();
+            var cover = $("#img-cover").attr("src");
+
+            $.post("{{asset('admin/article/create')}}",{title:title,content:content,cover:cover},function(result){
+                console.log(result);
+            });
         });
 
         /**

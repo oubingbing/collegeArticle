@@ -16,12 +16,21 @@ class CollegeArticleController extends Controller
 {
     public function article()
     {
-        $result = CollegeArticle::orderBy(CollegeArticle::FIELD_CREATED_AT,'desc')->first();
-
-
-
-        //$result->{CollegeArticle::FIELD_CONTENT} = $Parsedown->parse($result->{CollegeArticle::FIELD_CONTENT});
+        $result = CollegeArticle::orderBy(CollegeArticle::FIELD_CREATED_AT,'desc')
+            ->select([
+                CollegeArticle::FIELD_ID,
+                CollegeArticle::FIELD_ID_POSTER,
+                CollegeArticle::FIELD_COVER_IMAGE,
+                CollegeArticle::FIELD_TITLE,
+                CollegeArticle::FIELD_CREATED_AT
+            ])
+            ->get();
 
         return $result;
+    }
+
+    public function detail($id)
+    {
+
     }
 }

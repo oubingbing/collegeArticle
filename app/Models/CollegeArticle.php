@@ -28,6 +28,10 @@ class CollegeArticle extends BaseModel
 
     const FIELD_STATUS = 'status';
 
+    protected $casts = [
+        self::FIELD_COVER_IMAGE => 'array',
+    ];
+
     protected $fillable = [
         self::FIELD_ID,
         self::FIELD_ID_POSTER,

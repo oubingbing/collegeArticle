@@ -13,6 +13,7 @@ use App\Exceptions\ApiException;
 use App\Models\QiNiuTokenModel;
 use Carbon\Carbon;
 use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
 
 class QiNiuService
 {
@@ -38,8 +39,8 @@ class QiNiuService
     {
         $qiNiuToken = QiNiuTokenModel::query()->orderBy(QiNiuTokenModel::FIELD_CREATED_AT,'DESC')->first();
         if($qiNiuToken){
-            if(Carbon::parse($qiNiuToken->{QiNiuTokenModel::FIELD_EXPIRED_AT})->lt(Carbon::now())){
-                $token = $qiNiuToken->{QiNiuTokenModel::FIELD_EXPIRED_AT};
+            if(!Carbon::parse($qiNiuToken->{QiNiuTokenModel::FIELD_EXPIRED_AT})->lt(Carbon::now())){
+                $token = $qiNiuToken->{QiNiuTokenModel::FIELD_TOKEN};
             }else{
                 $token = $this->uploadToken();
                 if(!$token){
@@ -91,6 +92,16 @@ class QiNiuService
         $token = $this->auth->privateDownloadUrl($this->baseUrl);
 
         return $token;
+    }
+
+    public function uploadImage($token,$filePath)
+    {
+        $uploadMgr = new UploadManager();
+        list($ret, $err) = $uploadMgr->putFile($token, null, $filePath);
+        if($err != ''){
+            throw new ApiException("上传图片出错！",500);
+        }
+        return $ret;
     }
 
 }
