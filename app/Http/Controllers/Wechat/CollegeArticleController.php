@@ -31,6 +31,6 @@ class CollegeArticleController extends Controller
 
     public function detail($id)
     {
-
+        return CollegeArticle::query()->where(CollegeArticle::FIELD_ID,$id)->first();
     }
 }
