@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Wechat\CollegeArticleController;
 use App\Http\Wechat\LocationController;
 use App\Http\Wechat\TravelController;
+use App\Http\Wechat\UserController;
 
 $api = app('Dingo\Api\Routing\Router');
 
@@ -29,8 +30,13 @@ $api->version('v1', function ($api) {
 
         $api->group(['middleware' => 'wechat'], function ($api) {
 
+            /** 获取用户信息 **/
+            $api->get('/user',UserController::class . '@personal');
+
+            /** 获取文章列表 **/
             $api->get("/article",CollegeArticleController::class . "@article");
 
+            /** 获取文章详情 **/
             $api->get("/article/{id}",CollegeArticleController::class . "@detail");
         });
 
