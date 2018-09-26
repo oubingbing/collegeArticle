@@ -10,6 +10,7 @@ namespace Tests\Unit;
 
 
 use App\Http\QiNiuLogic\QiNiuLogic;
+use App\Http\Service\QiNiuService;
 use Tests\TestCase;
 
 class QiniuTest extends TestCase
@@ -19,7 +20,7 @@ class QiniuTest extends TestCase
      */
     public function uploadToken()
     {
-        $token = app(QiNiuLogic::class)->uploadToken();
+        $token = app(QiNiuService::class)->getToken();
 
         dd($token);
     }
