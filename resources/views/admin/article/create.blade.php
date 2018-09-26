@@ -15,15 +15,12 @@
             padding-bottom: 10px;
         }
 
-        .article-label{
-            margin-right: 20px;
-        }
-
         .picture-item .upload-button{
             padding: 5px;
             border-bottom-left-radius: 5px;
             border-bottom-right-radius: 5px;
             text-align: center;
+            width: 190px;
         }
 
         .picture-item .upload-none{
@@ -38,7 +35,7 @@
         }
 
         .picture-item .delete-container{
-            width: 150px;
+            width: 190px;
             height: 120px;
             z-index: 20;
             position: absolute;
@@ -53,7 +50,7 @@
         }
 
         .picture-item img{
-            width: 150px;
+            width: 190px;
             height: 120px;
             border-top-left-radius: 5px;
             border-top-right-radius: 5px;
@@ -70,7 +67,7 @@
             background: darkgray;
             color: #009688;
             cursor:pointer;
-            width: 150px;
+            width: 190px;
         }
 
         .picture-item .upload-success{
@@ -82,18 +79,17 @@
 <body>
 <div id="app">
     <div id="layout" class="x-body">
-        <header>
-            <h1>写文章</h1>
-            <div class="article-item">
-                <label class="article-label">
-                    标题
-                </label>
-                <div class="layui-input-inline">
-                    <input id="title" type="text" class="layui-input" style="width: 500px">
+
+        <form class="layui-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label"><span class="x-red">*</span>类型</label>
+                <div class="layui-input-block">
+                    <input type="radio" name="article-type" value="2" lay-skin="primary" title="笔记" checked="">
+                    <input type="radio" name="article-type" value="1" lay-skin="primary" title="大学成长记">
                 </div>
             </div>
-            <div class="article-item picture-item">
-                <label class="article-label">
+            <div class="layui-form-item article-item picture-item">
+                <label for="phone" class="layui-form-label">
                     封面
                 </label>
                 <div class="layui-input-inline">
@@ -109,12 +105,46 @@
                     </div>
                     <input type="file" id="cover-picture" style="display: none" class="layui-input"/>
                 </div>
+                <div class="layui-form-mid layui-word-aux">
+                    可为空
+                </div>
             </div>
-        </header>
-        <div id="editormd">
-            <textarea id="article" style="display:none;"></textarea>
+            <div class="layui-form-item">
+                <label for="username" class="layui-form-label">
+                    <span class="x-red">*</span>标题
+                </label>
+                <div class="layui-input-inline">
+                    <input type="text"
+                           id="title"
+                           required=""
+                           lay-verify="required"
+                           autocomplete="off"
+                           style="width: 500px"
+                           class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux" style="margin-left: 320px">
+                    <span class="x-red">*</span>必填
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label for="L_email" class="layui-form-label">
+                    <span class="x-red">*</span>内容
+                </label>
+                <div class="layui-input-inline" id="editormd">
+                    <textarea id="article" style="display:none;"></textarea>
+                </div>
+                <div class="layui-form-mid layui-word-aux">
+                    <span class="x-red">*</span>
+                </div>
+            </div>
+        </form>
+        <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+            </label>
+            <button  class="layui-btn" lay-filter="add" lay-submit="" id="submit">
+                提交
+            </button>
         </div>
-        <header><button class="layui-btn layui-btn-info" id="submit">提交</button></header>
     </div>
 
 </div>
@@ -131,28 +161,24 @@
 
     $(function() {
         $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
-
         var testEditor = editormd("editormd", {
             width: "90%",
             height: 640,
             markdown : "",
             path : "/lib/",
-            //dialogLockScreen : false,   // 设置弹出层对话框不锁屏，全局通用，默认为 true
-            //dialogShowMask : false,     // 设置弹出层对话框显示透明遮罩层，全局通用，默认为 true
-            //dialogDraggable : false,    // 设置弹出层对话框不可拖动，全局通用，默认为 true
-            //dialogMaskOpacity : 0.4,    // 设置透明遮罩层的透明度，全局通用，默认值为 0.1
-            //dialogMaskBgColor : "#000", // 设置透明遮罩层的背景颜色，全局通用，默认为 #fff
             imageUpload : true,
             imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
             imageUploadURL : "{{asset('/admin/article/image_upload')}}",
         });
 
+
         $("#submit").on('click',function () {
             var title = $("#title").val();
             var content = $("#article").val();
             var cover = $("#img-cover").attr("src");
+            var articleType = $("input[type='radio']:checked").val();
 
-            $.post("{{asset('admin/article/create')}}",{title:title,content:content,cover:cover},function(result){
+            $.post("{{asset('admin/article/create')}}",{title:title,content:content,cover:cover,article_type:articleType},function(result){
                 console.log(result);
             });
         });
@@ -162,7 +188,6 @@
          **/
         $("#cover-picture").unbind("change").bind("change",function(){
             var file = this.files[0];
-            //console.log($("#img-cover").attr("src"));
             uploadPicture(file,function (res) {
                 $("#img-cover").attr("src",IMAGE_URL+res.key);
                 $(".upload-success").css("display","");

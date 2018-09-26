@@ -47,8 +47,9 @@ class ArticleController extends Controller
         $content = request()->input("content");
         $title = request()->input("title");
         $cover = request()->input('cover');
+        $articleType = request()->input("article_type");
 
-        $result = $this->collegeArticleService->save(1,$title,$content,[$cover]);
+        $result = $this->collegeArticleService->save(1,$title,$content,[$cover],$articleType);
 
         return webResponse("新建成功",200,$result);
     }

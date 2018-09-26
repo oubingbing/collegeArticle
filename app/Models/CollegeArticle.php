@@ -24,9 +24,15 @@ class CollegeArticle extends BaseModel
 
     const FIELD_CONTENT = 'content';
 
+    /** 文章类型，1=大学成长记，2=日记 */
     const FIELD_TYPE = 'type';
 
     const FIELD_STATUS = 'status';
+
+    /** 大学成长记 **/
+    const ENUM_COLLEGE_NOTE = 1;
+    /** 日记 */
+    const ENUM_NOTE = 2;
 
     protected $casts = [
         self::FIELD_COVER_IMAGE => 'array',

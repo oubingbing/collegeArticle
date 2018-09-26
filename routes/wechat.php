@@ -36,6 +36,9 @@ $api->version('v1', function ($api) {
             /** 获取文章列表 **/
             $api->get("/article",CollegeArticleController::class . "@article");
 
+            /** 获取日志列表 **/
+            $api->get("/notes",CollegeArticleController::class . "@noteList");
+
             /** 获取文章详情 **/
             $api->get("/article/{id}",CollegeArticleController::class . "@detail");
         });
