@@ -371,6 +371,12 @@
                             sub.enter = false;
                             return sub;
                         })
+                    }else{
+                        item.note_list = item.note_list.map(function (sub) {
+                            sub.tap = false;
+                            sub.enter = false;
+                            return sub;
+                        })
                     }
                     return item;
                 })
