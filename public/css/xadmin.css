@@ -291,8 +291,8 @@ xblock{
     z-index: 2;
     padding-top: 10px;
     background-color: #EEEEEE;
-    width: 220px;
-    max-width: 220px;
+    width: 300px;
+    max-width: 300px;
     overflow: auto;
     overflow-x:hidden;
     border-right: 1px solid #e5e5e5;
@@ -371,7 +371,7 @@ xblock{
     top: 46px;
     right: 0;
     bottom: 42px;
-    left: 221px;
+    left: 300px;
     overflow: hidden;
     z-index: 1;
 }

@@ -12,9 +12,9 @@ class IndexController extends Controller
 {
     public function dashboard()
     {
-        $user = request()->get('user');
+       // $user = request()->get('user');
 
-        return view('admin.dashboard',['user'=>$user]);
+        return view('admin.dashboard');
     }
 
     /**
