@@ -22,10 +22,13 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
         /** 创建文章视图页面 */
         Route::get('article/create',"ArticleController@createView");
 
-    /** 创建文章视图页面 */
-    Route::post('article/create',"ArticleController@create");
+        /** 创建文章视图页面 */
+        Route::post('article/create',"ArticleController@create");
 
+        /** 文章上传图片 **/
         Route::post('article/image_upload',"ArticleController@uploadImage");
+
+        Route::post("note_category/create","NoteCategoryController@create");
     //});
 
 });

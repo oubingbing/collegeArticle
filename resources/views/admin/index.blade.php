@@ -148,6 +148,19 @@
         color: white;
     }
 
+    .create-category{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        padding: 5px;
+    }
+
+    .create-category button{
+        margin-left: 3px;
+    }
+
 </style>
 @section('content')
 <body>
@@ -167,12 +180,12 @@
           </li>
           <li class="layui-nav-item to-index"><a href="/">前台首页</a></li>
         </ul>
-        
+
     </div>
     <!-- 顶部结束 -->
     <!-- 中部开始 -->
      <!-- 左侧菜单开始 -->
-    <div class="left-nav" style="width: 300px;max-width: 300px;">
+    <div class="left-nav">
       <div id="side-nav">
         <ul id="nav">
             <li>
@@ -220,11 +233,34 @@
                           </transition>
                       </div>
                   </div>
+
+              <div class="create-dialog" v-if="showCreateCategory">
+                  <div class="create-category">
+                      <div class="layui-input-inline">
+                          <input type="text"
+                                 id="title"
+                                 required=""
+                                 lay-verify="required"
+                                 autocomplete="off"
+                                 v-model="categoryName"
+                                 placeholder="笔记簿名字"
+                                 class="layui-input">
+                      </div>
+                      <div class="layui-form-mid layui-word-aux">
+                          <button  class="layui-btn" lay-filter="add" lay-submit="" v-on:click="createCategory">
+                              提交
+                          </button>
+                      </div>
+                  </div>
+              </div>
+
               </div>
           </div>
 
       </div>
     </div>
+
+
     <!-- <div class="x-slide_left"></div> -->
     <!-- 左侧菜单结束 -->
     <!-- 右侧主体开始 -->
@@ -251,6 +287,11 @@
 </div>
 </body>
 <script>
+    function getTimeString() {
+        let myDate = new Date();
+        return myDate.getFullYear()+''+(myDate.getMonth()+1)+''+myDate.getDate()+''+myDate.getHours()+''+myDate.getMinutes()+''+myDate.getSeconds()+''+Math.floor(Math.random()*100);
+    }
+     
     let categories = [
         {
             id:1,
@@ -283,7 +324,9 @@
         el: '#app',
         data: {
             name:'bingbing',
-            noteCategories:[]
+            noteCategories:[],
+            showCreateCategory:false,
+            categoryName:''
         },
         created:function () {
             let categoryData = this.noteCategories;
@@ -295,9 +338,32 @@
         },
         methods:{
             createDir:function () {
-                console.log("新建笔记");
+                this.showCreateCategory = true;
+            },
+            createCategory:function () {
+              console.log(this.categoryName);
+              let categoryName = this.categoryName;
+              if(categoryName == '' || categoryName == undefined){
+                  layer.msg("名字不能为空");
+                  return false
+              }
+
+                let _this = this;
+                axios.post("{{ asset('admin/note_category/create') }}",{name:categoryName}).then( res=> {
+                    console.log(res.data);
+                    if(res.data.code == 200){
+                        _this.showCreateCategory = false;
+                        _this.categoryName = '';
+                    }else{
+                        layer.msg("新建失败");
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
             },
             showNoteList:function (id) {
+                this.showCreateCategory = false;
                 let categoryData = this.noteCategories;
                 this.noteCategories = categoryData.map(function (item) {
                     if(item.id == id){

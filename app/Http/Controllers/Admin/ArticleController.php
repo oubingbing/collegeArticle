@@ -66,7 +66,7 @@ class ArticleController extends Controller
         $filePath =  $request->file('editormd-image-file')->path();
         $token = app(QiNiuService::class)->getToken();
         if($token == ''){
-            throw new ApiException("获取token失败",500);
+            return webResponse("获取token失败",500);
         }
 
         $result = app(QiNiuService::class)->uploadImage($token,$filePath);
