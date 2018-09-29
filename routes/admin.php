@@ -28,7 +28,13 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
         /** 文章上传图片 **/
         Route::post('article/image_upload',"ArticleController@uploadImage");
 
+        /** 创建笔记类别 **/
         Route::post("note_category/create","NoteCategoryController@create");
+
+        Route::get("notes","NoteCategoryController@getNotes");
+
+        /** 穿件笔记 **/
+        Route::post("note/create","NoteController@createNote");
     //});
 
 });

@@ -31,9 +31,10 @@ class NoteCategory extends BaseModel
 
     /** 公开 **/
     const ENUM_TYPE_PRIVATE = 1;
-
     /** 私密 */
     const ENUM_TYPE_PUBLIC = 2;
+
+    const REL_NOTE = 'notes';
 
     protected $fillable = [
         self::FIELD_ID,
@@ -42,4 +43,9 @@ class NoteCategory extends BaseModel
         self::FIELD_TYPE,
         self::FIELD_STATUS
     ];
+
+    public function notes()
+    {
+        return $this->hasMany(Note::class,Note::FIELD_ID_CATEGORY,self::FIELD_ID);
+    }
 }

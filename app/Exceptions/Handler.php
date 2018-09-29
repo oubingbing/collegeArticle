@@ -78,6 +78,15 @@ class Handler extends ExceptionHandler
             ];
             return response()->json($result);
         }
+
+        if($e instanceof WebException){
+            $result = [
+                "code"    => $e->getCode(),
+                "message" => $e->getMessage(),
+                "data"          => null,
+            ];
+            return response()->json($result);
+        }
         return parent::render($request, $e);
     }
 

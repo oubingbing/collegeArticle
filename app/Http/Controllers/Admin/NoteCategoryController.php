@@ -23,6 +23,13 @@ class NoteCategoryController extends Controller
         $this->noteCategoryService = $service;
     }
 
+    /**
+     * 新建笔记类别
+     *
+     * @author yezi
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
+     * @throws ApiException
+     */
     public function create()
     {
         $name = request()->input("name");
@@ -37,6 +44,16 @@ class NoteCategoryController extends Controller
 
         $category = $this->noteCategoryService->create($userId,$name,$type);
 
-        return webResponse("新建成功",200,$category);
+        return webResponse("新建成功",200,$this->noteCategoryService->formatSingle($category));
+    }
+
+    public function getNotes()
+    {
+        //$userId = request()->get("user");
+        $userId = 1;
+
+        $notes = $this->noteCategoryService->getNoteCategories($userId);
+
+        return webResponse("ok",200,$notes);
     }
 }

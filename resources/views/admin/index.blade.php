@@ -84,6 +84,10 @@
         cursor:pointer;
     }
 
+    .selectTitle{
+        background: red;
+    }
+
     .note-title .title-label{
         white-space: nowrap;
         overflow: hidden;
@@ -98,7 +102,7 @@
     }
 
     .note-content .content-title{
-        padding: 5px;
+        padding: 10px;
         color: gray;
         white-space: nowrap;
         overflow: hidden;
@@ -219,17 +223,41 @@
                               <span class="title-label">@{{ category.name }}</span>
                           </div>
                           <transition name="fade">
-                          <div class="note-content" v-if="category.showNotes == true">
-                              <div class="content-title"
-                                    @mouseenter="enterNote(category.id,note.id)"
-                                    @mouseleave="leaveNote()"
-                                   v-bind:class="{tap:note.tap,enter:note.enter}"
-                                   v-on:click="openNote(category.id,note.id)"
-                                   v-for="note in category.note_list">
-                                  <small v-bind:class="{titleColor:note.tap}">@{{ note.title }}</small>
+                              <div class="note-content" v-if="category.showNotes == true">
+                                  <div class="content-title"
+                                        @mouseenter="enterNote(category.id,note.id)"
+                                        @mouseleave="leaveNote()"
+                                       v-bind:class="{tap:note.tap,enter:note.enter}"
+                                       v-on:click="openNote(category.id,note.id)"
+                                       v-for="note in category.notes">
+                                      <span v-bind:class="{titleColor:note.tap}">@{{ note.title }}</span>
+                                  </div>
+
+                                  <div class="create-dialog create-note" v-if="category.showCreateNote">
+                                      <div class="create-category">
+                                          <div class="layui-input-inline">
+                                              <input type="text"
+                                                     id="name_name"
+                                                     required=""
+                                                     lay-verify="required"
+                                                     autocomplete="off"
+                                                     v-model="noteName"
+                                                     placeholder="笔记"
+                                                     class="layui-input">
+                                          </div>
+                                          <div class="layui-form-mid layui-word-aux">
+                                              <button  class="layui-btn" lay-filter="add" lay-submit="" v-on:click="createNote(category.id)">
+                                                  提交
+                                              </button>
+                                          </div>
+                                      </div>
+                                  </div>
+
+                                  <div class="content-title add-icon" v-on:click="showCreateNoteButton(category.id)">
+                                      <img src="{{asset('images/add-note.png')}}" alt="">
+                                  </div>
+
                               </div>
-                              <div class="content-title add-icon"><img src="{{asset('images/add-note.png')}}" alt=""></div>
-                          </div>
                           </transition>
                       </div>
                   </div>
@@ -243,7 +271,7 @@
                                  lay-verify="required"
                                  autocomplete="off"
                                  v-model="categoryName"
-                                 placeholder="笔记簿名字"
+                                 placeholder="笔记簿"
                                  class="layui-input">
                       </div>
                       <div class="layui-form-mid layui-word-aux">
@@ -287,61 +315,124 @@
 </div>
 </body>
 <script>
-    function getTimeString() {
-        let myDate = new Date();
-        return myDate.getFullYear()+''+(myDate.getMonth()+1)+''+myDate.getDate()+''+myDate.getHours()+''+myDate.getMinutes()+''+myDate.getSeconds()+''+Math.floor(Math.random()*100);
-    }
-     
-    let categories = [
-        {
-            id:1,
-            name:"java",
-            note_list:[
-                {id:1,title:"springboot安装教程springboot",tap:false,enter:false},
-                {id:2,title:"java多态",tap:false,enter:false},
-                {id:3,title:"多线程",tap:false,enter:false}
-            ]
-        },
-        {
-            id:2,
-            name:"php",
-            note_list:[
-                {id:1,title:"laravel部署教程",tap:false,enter:false},
-                {id:2,title:"php魔术方法",tap:false,enter:false},
-                {id:3,title:"php环境变量",tap:false,enter:false}
-            ]
-        },
-        {
-            id:3,
-            name:"前端技术整合",
-            note_list:[
-                {id:1,title:"vue.js",tap:false,enter:false}
-            ]
-        }
-    ];
-
     new Vue({
         el: '#app',
         data: {
             name:'bingbing',
             noteCategories:[],
             showCreateCategory:false,
-            categoryName:''
+            showCreateNote:false,
+            categoryName:'',
+            noteName:''
         },
         created:function () {
-            let categoryData = this.noteCategories;
-            categories.map(function (item) {
-                item.showNotes = false;
-                categoryData.push(item);
-            });
-            this.noteCategories = categoryData;
+            this.getCategories();
         },
         methods:{
             createDir:function () {
                 this.showCreateCategory = true;
             },
+
+            /**
+             * 获取笔记本列表
+             * */
+            getCategories:function () {
+                let categoryData = this.noteCategories;
+                let _this = this;
+                axios.get("{{ asset('admin/notes') }}",{}).then( res=> {
+                    console.log(res.data.data);
+                    if(res.data.code == 200){
+                        this.noteCategories = res.data.data.map(function (item) {
+                            item = _this.formatSingleNoteCateGory(item);
+                            categoryData.push(item);
+                            return item;
+                        })
+                    }else{
+                        layer.msg(res.data.message);
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            /**
+             * 格式化单挑笔记簿
+             * 
+             * */
+            formatSingleNoteCateGory:function (category) {
+                let _this = this;
+                category.notes.map(function (note) {
+                    return _this.formatSingleNote(note);
+                });
+                category.showNotes = false;
+                return category;
+            },
+            
+            formatSingleNote:function (note) {
+                note.tap=false;
+                note.enter=false;
+                note.showCreateNote=false;
+                return note;
+            },
+
+            /**
+             * 新建笔记本
+             *
+             * */
+            createNote:function (id) {
+                let note = this.noteName;
+                if(note == '' || note == undefined){
+                    layer.msg("名字不能为空");
+                    return false
+                }
+                let _this = this;
+                axios.post("{{ asset('admin/note/create') }}",{title:note,category_id:id}).then( res=> {
+                    console.log(res.data.code);
+                    if(res.data.code == 200){
+                        _this.hiddenCreateNote(id,_this);
+                    }else{
+                        layer.msg("新建失败");
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            },
+
+            /**
+             * 隐藏新建笔记的输入框
+             *
+             * */
+            hiddenCreateNote:function (id) {
+                let categoryData = this.noteCategories;
+                this.noteCategories = categoryData.map(function (item) {
+                    if(item.id == id){
+                        item.showCreateNote = false;
+                    }
+                    return item;
+                })
+            },
+
+            /**
+             * 显示创建笔记的按钮
+             *
+             * */
+            showCreateNoteButton:function(id){
+                this.showCreateCategory = false;
+                let categoryData = this.noteCategories;
+                this.noteCategories = categoryData.map(function (item) {
+                    if(item.id == id){
+                        item.showCreateNote = true;
+                    }else{
+                        item.showCreateNote = false;
+                    }
+
+                    return item;
+                })
+            },
+            /**
+             * 新建笔记簿
+             * */
             createCategory:function () {
-              console.log(this.categoryName);
               let categoryName = this.categoryName;
               if(categoryName == '' || categoryName == undefined){
                   layer.msg("名字不能为空");
@@ -354,6 +445,9 @@
                     if(res.data.code == 200){
                         _this.showCreateCategory = false;
                         _this.categoryName = '';
+                        let categoryData = _this.noteCategories;
+                        categoryData.push(_this.formatSingleNoteCateGory(res.data.data));
+                        _this.noteCategories = categoryData;
                     }else{
                         layer.msg("新建失败");
                     }
@@ -390,7 +484,7 @@
                 let categoryData = this.noteCategories;
                 this.noteCategories = categoryData.map(function (item) {
                     if(item.id == categoryId){
-                        item.note_list = item.note_list.map(function (sub) {
+                        item.notes = item.notes.map(function (sub) {
                             if(sub.id == noteId && sub.tap == false){
                                 sub.enter = true;
                             }else{
@@ -409,7 +503,7 @@
             leaveNote:function () {
                 let categoryData = this.noteCategories;
                 this.noteCategories = categoryData.map(function (item) {
-                    item.note_list = item.note_list.map(function (sub) {
+                    item.notes = item.notes.map(function (sub) {
                         sub.enter = false;
                         return sub;
                     });
@@ -428,7 +522,7 @@
                 let categoryData = this.noteCategories;
                 this.noteCategories = categoryData.map(function (item) {
                     if(item.id == categoryId){
-                        item.note_list = item.note_list.map(function (sub) {
+                        item.notes = item.notes.map(function (sub) {
                             if(sub.id == noteId){
                                 sub.tap = true;
                             }else{
@@ -438,7 +532,7 @@
                             return sub;
                         })
                     }else{
-                        item.note_list = item.note_list.map(function (sub) {
+                        item.notes = item.notes.map(function (sub) {
                             sub.tap = false;
                             sub.enter = false;
                             return sub;
