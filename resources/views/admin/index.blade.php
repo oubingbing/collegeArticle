@@ -59,6 +59,7 @@
         display: flex;
         flex-direction: column;
         align-items: flex-end;
+        margin-top: 5px;
     }
 
     .note .note-item{
@@ -66,7 +67,6 @@
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        padding-top: 15px;
         align-items: center;
     }
 
@@ -82,6 +82,7 @@
         flex-direction: row;
         align-items: center;
         cursor:pointer;
+        padding: 10px;
     }
 
     .selectTitle{
@@ -141,6 +142,7 @@
     .fade-enter-active, .fade-leave-active {
         transition: opacity .4s;
     }
+
     .fade-enter, .fade-leave-to {
         opacity: 0;
     }
@@ -163,6 +165,10 @@
 
     .create-category button{
         margin-left: 3px;
+    }
+
+    .moveCategory{
+        background: #F0F8FF;
     }
 
 </style>
@@ -218,7 +224,11 @@
                   <div class="title"><span class="title-label">我的笔记本</span></div>
                   <div class="note">
                       <div class="note-item" v-for="category in noteCategories">
-                          <div class="note-title" v-on:click="showNoteList(category.id)">
+                          <div class="note-title"
+                                @mouseenter="enterNoteCategory(category.id)"
+                                @mouseleave="leaveNoteCategory()"
+                                v-bind:class="{moveCategory:category.showBackgroud}"
+                                v-on:click="showNoteList(category.id)">
                               <img src="{{asset('images/book.png')}}" alt="">
                               <span class="title-label">@{{ category.name }}</span>
                           </div>
@@ -333,6 +343,22 @@
                 this.showCreateCategory = true;
             },
 
+            enterNoteCategory:function(id){
+                let categoryData = this.noteCategories;
+                this.noteCategories = categoryData.map(function (item) {
+                    if(item.id == id){
+                        item.showBackgroud = true;
+                    }else{
+                        item.showBackgroud = false;
+                    }
+                    return item;
+                })
+            },
+
+            leaveNoteCategory:function () {
+
+            },
+
             /**
              * 获取笔记本列表
              * */
@@ -365,6 +391,7 @@
                     return _this.formatSingleNote(note);
                 });
                 category.showNotes = false;
+                category.showBackgroud = false;
                 return category;
             },
             
