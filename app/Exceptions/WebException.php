@@ -11,7 +11,7 @@ namespace App\Exceptions;
 
 class WebException extends \Exception
 {
-    function __construct($msg='',$code)
+    function __construct($msg='',$code=500)
     {
         parent::__construct($msg,$code);
     }

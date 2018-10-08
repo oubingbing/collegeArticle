@@ -97,6 +97,12 @@ class NoteCategoryService
         return $result;
     }
 
+    public function getCategoryById($userId,$categoryId)
+    {
+        $result = Model::query()->where(Model::FIELD_ID_WEB_USER,$userId)->where(Model::FIELD_ID,$categoryId)->first();
+        return $result;
+    }
+
     public function formatSingle($item)
     {
         if(!isset($item[Model::REL_NOTE])){

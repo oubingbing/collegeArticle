@@ -36,4 +36,26 @@ class NoteService
         return $item;
     }
 
+    public function getNoteById($id)
+    {
+        $result = Model::query()->where(Model::FIELD_ID,$id)->first();
+        return $result;
+    }
+
+    public function updateContent($content,$note)
+    {
+        $note->{Model::FIELD_CONTENT} = $content;
+        $result = $note->save();
+
+        return $result;
+    }
+
+    public function updateTitle($title,$note)
+    {
+        $note->{Model::FIELD_TITLE} = $title;
+        $result = $note->save();
+        return $result;
+    }
+
+
 }

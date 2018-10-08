@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Carbon\Carbon;
 use Closure;
+use Illuminate\View\View;
 
 class Before
 {
@@ -18,4 +19,6 @@ class Before
     {
         return $next($request);
     }
+
+
 }

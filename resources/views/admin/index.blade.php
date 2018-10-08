@@ -1,4 +1,7 @@
 @extends('layouts/admin')
+<link rel="stylesheet" href="{{asset('css/markdown/style.css')}}" />
+<link rel="stylesheet" href="{{asset('css/markdown/editormd.css')}}" />
+<link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
 <style>
     .create-container{
         width: 100%;
@@ -85,6 +88,21 @@
         padding: 10px;
     }
 
+    .note-title .title-left{
+        width: 80%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .note-title .title-right{
+        width: 20%;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
     .selectTitle{
         background: red;
     }
@@ -109,6 +127,9 @@
         overflow: hidden;
         text-overflow: ellipsis;
         cursor:pointer;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
     }
 
     .content-title img{
@@ -128,6 +149,7 @@
         align-items: center;
         justify-content: center;
         border-radius: 2px;
+        margin-bottom: 10px;
     }
 
     .note-content .enter
@@ -169,6 +191,56 @@
 
     .moveCategory{
         background: #F0F8FF;
+    }
+
+    .page-content .content-header{
+        width: 100%;
+        height: 70px;
+        background: white;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .content-header .header-left{
+        width: 50%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .header-left .title{
+        margin-left: 30px;
+    }
+
+    .content-header .header-right{
+        width: 50%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
+    .header-right .operate-button{
+        margin-right: 30px;
+    }
+
+    .operate-button .save-button{
+        margin-right: 5px;
+    }
+
+    .operate-button button{
+        padding-top: 8px;
+        padding-bottom: 8px;
+        padding-left: 20px;
+        padding-right: 20px;
+        color: #009688;
+        border-style:solid;
+        border-width:1px;
+        border-color: #009688;
+        background: white;
+        border-radius: 5px;
     }
 
 </style>
@@ -229,8 +301,14 @@
                                 @mouseleave="leaveNoteCategory()"
                                 v-bind:class="{moveCategory:category.showBackgroud}"
                                 v-on:click="showNoteList(category.id)">
-                              <img src="{{asset('images/book.png')}}" alt="">
-                              <span class="title-label">@{{ category.name }}</span>
+                              <div class="title-left">
+                                  <img src="{{asset('images/book.png')}}" alt="">
+                                  <span class="title-label">@{{ category.name }}</span>
+                              </div>
+                              <div class="title-right" v-if="category.showBackgroud == true">
+                                  <img src="{{asset('images/edit-category.png')}}" style="width: 25px;height: 20px" alt="">
+                                  <img src="{{asset('images/delete-category.png')}}" style="width: 25px;height: 20px" alt="">
+                              </div>
                           </div>
                           <transition name="fade">
                               <div class="note-content" v-if="category.showNotes == true">
@@ -298,19 +376,32 @@
       </div>
     </div>
 
-
     <!-- <div class="x-slide_left"></div> -->
     <!-- 左侧菜单结束 -->
     <!-- 右侧主体开始 -->
     <div class="page-content">
         <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
-          <ul class="layui-tab-title">
-            <li class="home"><i class="layui-icon">&#xe68e;</i>我的桌面</li>
-          </ul>
-          <div class="layui-tab-content">
-            <div class="layui-tab-item layui-show">
-                <iframe src='{{ asset('admin/dashboard') }}' frameborder="0" scrolling="yes" class="x-iframe"></iframe>
-            </div>
+          <div class="content-header">
+              <div class="header-left">
+                  <h2 class="title">@{{note.title}}</h2>
+              </div>
+              <div class="header-right">
+                  <div class="operate-button">
+                      <button class="save-button" v-on:click="saveEdit()" v-if="showSave == true">保存</button>
+                      <button class="edit-button" v-if="showEdit == true">编辑</button>
+                      <button class="edit-button">删除</button>
+                  </div>
+              </div>
+          </div>
+          <div class="content-body">
+              <div class="layui-input-inline" id="editormd" v-if="showEdit == true">
+                  <textarea style="display:none;"></textarea>
+              </div>
+
+              <div class="layui-input-inline" id="viewMd">
+                  <textarea style="display:none;"></textarea>
+              </div>
+
           </div>
         </div>
     </div>
@@ -323,252 +414,101 @@
     </div>
     <!-- 底部结束 -->
 </div>
-</body>
-<script>
-    new Vue({
-        el: '#app',
-        data: {
-            name:'bingbing',
-            noteCategories:[],
-            showCreateCategory:false,
-            showCreateNote:false,
-            categoryName:'',
-            noteName:''
-        },
-        created:function () {
-            this.getCategories();
-        },
-        methods:{
-            createDir:function () {
-                this.showCreateCategory = true;
-            },
+<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script src="{{asset('js/markdown/editormd.js')}}"></script>
+<script src="{{asset('lib/marked.min.js')}}"></script>
+<script src="{{asset('lib/prettify.min.js')}}"></script>
+<script src="{{asset('lib/raphael.min.js')}}"></script>
+<script src="{{asset('lib/underscore.min.js')}}"></script>
+<script src="{{asset('lib/sequence-diagram.min.js')}}"></script>
+<script src="{{asset('lib/flowchart.min.js')}}"></script>
+<script src="{{asset('lib/jquery.flowchart.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/note-index.js')}}"></script>
+<script type="text/javascript">
+    const token = "";
+    const IMAGE_URL = "{{env('QI_NIU_DOMAIN')}}";
+    const ZONE = "z2";
+    let editorMd = '';
+    let viewMd = '';
+    let markdown = '最后奉上我的毕业照，哈哈。![](http://article.qiuhuiyi.cn/FhE88ouA973WQUAPN539IvaNBDVo)';
 
-            enterNoteCategory:function(id){
-                let categoryData = this.noteCategories;
-                this.noteCategories = categoryData.map(function (item) {
-                    if(item.id == id){
-                        item.showBackgroud = true;
-                    }else{
-                        item.showBackgroud = false;
-                    }
-                    return item;
-                })
-            },
+    $(function() {
+        $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+        editorMd = editormd("editormd", {
+            width: "100%",
+            height: 800,
+            markdown : "",
+            path : "/lib/",
+            imageUpload : true,
+            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+            imageUploadURL : "{{asset('/admin/article/image_upload')}}",
+        });
 
-            leaveNoteCategory:function () {
+        viewMd = editormd.markdownToHTML("viewMd", {
+            markdown        : markdown ,//+ "\r\n" + $("#append-test").text(),
+            htmlDecode      : "style,script,iframe",  // you can filter tags decode
+            tocm            : true,    // Using [TOCM]
+            tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+        });
 
-            },
+        //viewMd.markdown = "php";
 
-            /**
-             * 获取笔记本列表
-             * */
-            getCategories:function () {
-                let categoryData = this.noteCategories;
-                let _this = this;
-                axios.get("{{ asset('admin/notes') }}",{}).then( res=> {
-                    console.log(res.data.data);
-                    if(res.data.code == 200){
-                        this.noteCategories = res.data.data.map(function (item) {
-                            item = _this.formatSingleNoteCateGory(item);
-                            categoryData.push(item);
-                            return item;
-                        })
-                    }else{
-                        layer.msg(res.data.message);
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
+        $("#submit").on('click',function () {
+            let title = $("#title").val();
+            let content = $("#article").val();
+            let cover = $("#img-cover").attr("src");
+            let articleType = $("input[type='radio']:checked").val();
 
-            /**
-             * 格式化单挑笔记簿
-             * 
-             * */
-            formatSingleNoteCateGory:function (category) {
-                let _this = this;
-                category.notes.map(function (note) {
-                    return _this.formatSingleNote(note);
-                });
-                category.showNotes = false;
-                category.showBackgroud = false;
-                return category;
-            },
-            
-            formatSingleNote:function (note) {
-                note.tap=false;
-                note.enter=false;
-                note.showCreateNote=false;
-                return note;
-            },
+            $.post("{{asset('admin/article/create')}}",{title:title,content:content,cover:cover,article_type:articleType},function(result){
+                console.log(result);
+            });
+        });
 
-            /**
-             * 新建笔记本
-             *
-             * */
-            createNote:function (id) {
-                let note = this.noteName;
-                if(note == '' || note == undefined){
-                    layer.msg("名字不能为空");
-                    return false
+        /**
+         * 监听图片上传
+         **/
+        $("#cover-picture").unbind("change").bind("change",function(){
+            var file = this.files[0];
+            uploadPicture(file,function (res) {
+                $("#img-cover").attr("src",IMAGE_URL+res.key);
+                $(".upload-success").css("display","");
+                $(".upload-none").css("display","none");
+            },function (res) {
+                var total = res.total;
+                console.log(total)
+            },function (res) {
+                console.log("出错了")
+            },ZONE);
+        });
+
+        /**
+         * 监听封面图片的删除icon
+         */
+        $(".image-container").on({
+            mouseover : function(){
+                if($("#img-cover").attr("src") != ''){
+                    $(".delete-container").css("display","");
                 }
-                let _this = this;
-                axios.post("{{ asset('admin/note/create') }}",{title:note,category_id:id}).then( res=> {
-                    console.log(res.data.code);
-                    if(res.data.code == 200){
-                        _this.hiddenCreateNote(id,_this);
-                    }else{
-                        layer.msg("新建失败");
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
-            },
-
-            /**
-             * 隐藏新建笔记的输入框
-             *
-             * */
-            hiddenCreateNote:function (id) {
-                let categoryData = this.noteCategories;
-                this.noteCategories = categoryData.map(function (item) {
-                    if(item.id == id){
-                        item.showCreateNote = false;
-                    }
-                    return item;
-                })
-            },
-
-            /**
-             * 显示创建笔记的按钮
-             *
-             * */
-            showCreateNoteButton:function(id){
-                this.showCreateCategory = false;
-                let categoryData = this.noteCategories;
-                this.noteCategories = categoryData.map(function (item) {
-                    if(item.id == id){
-                        item.showCreateNote = true;
-                    }else{
-                        item.showCreateNote = false;
-                    }
-
-                    return item;
-                })
-            },
-            /**
-             * 新建笔记簿
-             * */
-            createCategory:function () {
-              let categoryName = this.categoryName;
-              if(categoryName == '' || categoryName == undefined){
-                  layer.msg("名字不能为空");
-                  return false
-              }
-
-                let _this = this;
-                axios.post("{{ asset('admin/note_category/create') }}",{name:categoryName}).then( res=> {
-                    console.log(res.data);
-                    if(res.data.code == 200){
-                        _this.showCreateCategory = false;
-                        _this.categoryName = '';
-                        let categoryData = _this.noteCategories;
-                        categoryData.push(_this.formatSingleNoteCateGory(res.data.data));
-                        _this.noteCategories = categoryData;
-                    }else{
-                        layer.msg("新建失败");
-                    }
-                }).catch(function (error) {
-                    console.log(error);
-                });
-
-            },
-            showNoteList:function (id) {
-                this.showCreateCategory = false;
-                let categoryData = this.noteCategories;
-                this.noteCategories = categoryData.map(function (item) {
-                    if(item.id == id){
-                        if(item.showNotes == true){
-                            item.showNotes = false;
-                        }else{
-                            item.showNotes = true;
-                        }
-
-                    }
-
-                    return item;
-                })
-            },
-
-            /**
-             * 监控鼠标进入事件，改变背景颜色
-             *
-             * @param categoryId
-             * @param noteId
-             * @author 叶子
-             **/
-            enterNote:function (categoryId,noteId) {
-                let categoryData = this.noteCategories;
-                this.noteCategories = categoryData.map(function (item) {
-                    if(item.id == categoryId){
-                        item.notes = item.notes.map(function (sub) {
-                            if(sub.id == noteId && sub.tap == false){
-                                sub.enter = true;
-                            }else{
-                                sub.enter = false;
-                            }
-                            return sub;
-                        })
-                    }
-                    return item;
-                })
-            },
-
-            /**
-             * 监听鼠标移
-             * */
-            leaveNote:function () {
-                let categoryData = this.noteCategories;
-                this.noteCategories = categoryData.map(function (item) {
-                    item.notes = item.notes.map(function (sub) {
-                        sub.enter = false;
-                        return sub;
-                    });
-                    return item;
-                })
-            },
-
-            /**
-             * 监控鼠标点击笔记改变背景颜色
-             *
-             * @author yezi
-             * @param categoryId
-             * @param noteId
-             */
-            openNote:function(categoryId,noteId){
-                let categoryData = this.noteCategories;
-                this.noteCategories = categoryData.map(function (item) {
-                    if(item.id == categoryId){
-                        item.notes = item.notes.map(function (sub) {
-                            if(sub.id == noteId){
-                                sub.tap = true;
-                            }else{
-                                sub.tap = false;
-                            }
-                            sub.enter = false;
-                            return sub;
-                        })
-                    }else{
-                        item.notes = item.notes.map(function (sub) {
-                            sub.tap = false;
-                            sub.enter = false;
-                            return sub;
-                        })
-                    }
-                    return item;
-                })
+            } ,
+            mouseout : function(){
+                $(".delete-container").css("display","none");
             }
-        }
-    })
+        });
+
+        $("#delete-cover").on('click',function () {
+            $("#img-cover").attr("src","");
+            $(".delete-container").css("display","none");
+            $(".upload-none").css("display","");
+            $(".upload-success").css("display","none");
+            layer.msg("封面已移除");
+        })
+
+    });
 </script>
+</body>
 @stop

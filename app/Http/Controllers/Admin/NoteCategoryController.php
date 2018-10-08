@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Admin;
 
 
 use App\Exceptions\ApiException;
+use App\Exceptions\WebException;
 use App\Http\Controllers\Controller;
 use App\Http\Service\NoteCategoryService;
 use App\Models\NoteCategory;
@@ -47,13 +48,13 @@ class NoteCategoryController extends Controller
         return webResponse("新建成功",200,$this->noteCategoryService->formatSingle($category));
     }
 
-    public function getNotes()
+    public function categories()
     {
         //$userId = request()->get("user");
         $userId = 1;
 
         $notes = $this->noteCategoryService->getNoteCategories($userId);
 
-        return webResponse("ok",200,$notes);
+        return $notes;
     }
 }

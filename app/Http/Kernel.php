@@ -64,7 +64,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'wechat' => Wechat::class,
         'after' => After::class,
-        'before' => Before::class,
+        'webResponse' => Before::class,
         'authUser'=>AuthUser::class,
         'createApp'=>CreateApp::class
     ];

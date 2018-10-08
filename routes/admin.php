@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']], function () {
 
     //Route::group(['middleware'=>['authUser']], function () {
-    //Route::group(['middleware'=>['authUser']], function () {
         /** 后台首页 */
         Route::get('/','IndexController@index');
         /** 后台主页 */
@@ -31,11 +30,15 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
         /** 创建笔记类别 **/
         Route::post("note_category/create","NoteCategoryController@create");
 
-        Route::get("notes","NoteCategoryController@getNotes");
+        /** 笔记簿列表 **/
+        Route::get("note_category/list","NoteCategoryController@categories");
 
-        /** 穿件笔记 **/
+        /** 创建笔记 **/
         Route::post("note/create","NoteController@createNote");
-    //});
+
+        Route::get("note/{categoryId}/{noteId}","NoteController@detail");
+
+        Route::post("note/update/{id}","NoteController@edit");
 
 });
 
