@@ -26,6 +26,12 @@ class NoteController extends Controller
         $this->noteCategoryService = $noteCategoryService;
     }
 
+    /**
+     * 新建日志
+     *
+     * @author yezi
+     * @return mixed
+     */
     public function createNote()
     {
         $title = request()->input("title");
@@ -36,9 +42,19 @@ class NoteController extends Controller
         //$userId = request()->get("user");
         $userId = 1;
 
-        $result = $this->noteService->create($categoryId,$title,$content,$attachments,$type);
+        try{
+            \DB::beginTransaction();
 
-        return webResponse("新建成功",200,$this->noteService->formatSingle($result));
+            $result = $this->noteService->create($categoryId,$title,$content,$attachments,$type);
+            $result = $this->noteService->formatSingle($result);
+
+            \DB::commit();
+        }catch (\Exception $exception){
+            \DB::rollBack();
+            throw new WebException($exception->getMessage());
+        }
+
+        return $result;
     }
 
     /**
@@ -65,6 +81,14 @@ class NoteController extends Controller
         return $note;
     }
 
+    /**
+     * 编辑日志
+     *
+     * @author yezi
+     * @param $id
+     * @return mixed
+     * @throws WebException
+     */
     public function edit($id)
     {
         //$userId = request()->get("user");
@@ -101,5 +125,45 @@ class NoteController extends Controller
         }
 
         return $result;
+    }
+
+    /**
+     * 删除日志
+     *
+     * @author yezi
+     * @param $id
+     * @return bool|mixed|null
+     * @throws WebException
+     */
+    public function deleteNote($id)
+    {
+        //$userId = request()->get("user");
+        $userId = 1;
+
+        try{
+            \DB::beginTransaction();
+
+            $note = $this->noteService->getNoteById($id);
+            if(!$note){
+                throw new WebException("日志不存在");
+            }
+
+            $category = $this->noteCategoryService->getCategoryById($userId,$note->{Note::FIELD_ID_CATEGORY});
+            if(!$category){
+                throw new WebException("日志不存在");
+            }
+
+            $result = $this->noteService->deleteById($id);
+            if(!$result){
+                throw new WebException("删除失败");
+            }
+
+            \DB::commit();
+        }catch (\Exception $exception){
+            \DB::rollBack();
+            throw new WebException($exception->getMessage());
+        }
+
+        return (string)$result;
     }
 }

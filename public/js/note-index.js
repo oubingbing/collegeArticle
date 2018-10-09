@@ -8,11 +8,18 @@ new Vue({
         categoryName:'',
         noteName:'',
         note:'',
-        showSave:true,
-        showEdit:false
+        showEdit:false,
+        showMd:true,
+        showDelete:false,
+        showSave:false,
+        coverPictures:[]
     },
     created:function () {
         this.getCategories();
+        let _this = this;
+        setTimeout(function () {
+            _this.showMd = false;
+        },1000)
     },
     methods:{
         createDir:function () {
@@ -70,6 +77,12 @@ new Vue({
             return category;
         },
 
+        /**
+         * 格式化数据
+         *
+         * @param note
+         * @returns {*}
+         */
         formatSingleNote:function (note) {
             note.tap=false;
             note.enter=false;
@@ -88,10 +101,11 @@ new Vue({
                 return false
             }
             let _this = this;
-            axios.post("{{ asset('admin/note/create') }}",{title:note,category_id:id}).then( res=> {
-                console.log(res.data.code);
-                if(res.data.code == 200){
+            axios.post("admin/note/create",{title:note,category_id:id}).then( res=> {
+                if(res.data.code != 500){
+                    _this.noteName = '';
                     _this.hiddenCreateNote(id,_this);
+                    _this.appendNote(res.data);
                 }else{
                     layer.msg("新建失败");
                 }
@@ -109,6 +123,21 @@ new Vue({
             this.noteCategories = categoryData.map(function (item) {
                 if(item.id == id){
                     item.showCreateNote = false;
+                }
+                return item;
+            })
+        },
+        /**
+         * 添加日志到日志类目
+         *
+         * @author yezi
+         * @param note
+         */
+        appendNote:function (note) {
+            let categoryData = this.noteCategories;
+            this.noteCategories = categoryData.map(function (item) {
+                if(note.category_id == item.id){
+                    item.notes.push(note);
                 }
                 return item;
             })
@@ -142,7 +171,7 @@ new Vue({
             }
 
             let _this = this;
-            axios.post("{{ asset('admin/note_category/create') }}",{name:categoryName}).then( res=> {
+            axios.post("admin/note_category/create",{name:categoryName}).then( res=> {
                 console.log(res.data);
                 if(res.data.code == 200){
                     _this.showCreateCategory = false;
@@ -221,6 +250,11 @@ new Vue({
          * @param noteId
          */
         openNote:function(categoryId,noteId){
+            this.showEdit = true;
+            this.showDelete = true;
+            this.showMd = false;
+            this.showSave = false;
+
             let categoryData = this.noteCategories;
             this.noteCategories = categoryData.map(function (item) {
                 if(item.id == categoryId){
@@ -250,19 +284,20 @@ new Vue({
                 if(res.data.code != 500){
                     _this.note = res.data;
 
-                    $(function() {
-                        viewMd = editormd.markdownToHTML("viewMd", {
-                            markdown: _this.note.content,//+ "\r\n" + $("#append-test").text(),
-                            htmlDecode: "style,script,iframe",  // you can filter tags decode
-                            tocm: true,    // Using [TOCM]
-                            tocContainer: "#custom-toc-container", // 自定义 ToC 容器层
-                            emoji: true,
-                            taskList: true,
-                            tex: true,  // 默认不解析
-                            flowChart: true,  // 默认不解析
-                            sequenceDiagram: true,  // 默认不解析
-                        });
+                    editorMd.setValue(_this.note.content);
+                    console.log(_this.note.content);
+
+                    viewMd = editormd.markdownToHTML("viewMd", {
+                        markdown        : _this.note.content ,//+ "\r\n" + $("#append-test").text(),
+                        htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                        tocm            : true,    // Using [TOCM]
+                        emoji           : true,
+                        taskList        : true,
+                        tex             : true,  // 默认不解析
+                        flowChart       : true,  // 默认不解析
+                        sequenceDiagram : true,  // 默认不解析
                     });
+
                 }else{
                     layer.msg(res.data.message);
                 }
@@ -274,19 +309,163 @@ new Vue({
          * 保存编辑内容
          */
         saveEdit:function () {
+            this.showEdit = true;
+            this.showMd = false;
+            this.showSave = false;
+
             let _this = this;
             this.note.content = editorMd.getValue();
 
             axios.post(`admin/note/update/${this.note.id}`,{content:this.note.content}).then( res=> {
                 console.log(res.data);
                 if(res.data.code != 500){
-
+                    viewMd = editormd.markdownToHTML("viewMd", {
+                        markdown        : res.data.content ,//+ "\r\n" + $("#append-test").text(),
+                        htmlDecode      : "style,script,iframe",  // you can filter tags decode
+                        tocm            : true,    // Using [TOCM]
+                        emoji           : true,
+                        taskList        : true,
+                        tex             : true,  // 默认不解析
+                        flowChart       : true,  // 默认不解析
+                        sequenceDiagram : true,  // 默认不解析
+                    });
                 }else{
                     layer.msg("新建失败");
                 }
             }).catch(function (error) {
                 console.log(error);
             });
+        },
+        /**
+         * 显示markdown编辑框
+         */
+        showEditMd:function () {
+            editorMd.setValue(this.note.content);
+            this.showEdit = false;
+            this.showMd = true;
+            this.showSave = true;
+        },
+        /**
+         * 初始化markdown参数
+         */
+        mdInit:function () {
+            editorMd.setValue("");
+            this.showEdit=false;
+            this.showMd=false;
+            this.showDelete=false;
+            this.showSave=false;
+        },
+        /**
+         * 删除日志分类
+         *
+         * @author yezi
+         * @param id
+         */
+        deleteCategory:function (id) {
+            let _this = this;
+            let categoryData = _this.noteCategories;
+            layer.confirm('确认要删除吗？',function(index){
+                axios.post(`admin/note_category/${id}/delete`,{}).then( res=> {
+                    console.log(res.data);
+                    if(res.data.code == 500){
+                        layer.msg("删除失败");
+                    }else{
+                        layer.msg("删除成功");
+                        _this.noteCategories = categoryData.filter(function (item) {
+                            if(item.id != id){
+                                return item;
+                            }
+                        });
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            });
+        },
+        /**
+         * 删除笔记
+         */
+        deleteNote:function () {
+            let _this = this;
+            let id = this.note.id;
+            let categoryId = this.note.category_id;
+            let categoryData = _this.noteCategories;
+
+            layer.confirm('确认要删除吗？',function(index){
+                axios.post(`admin/note/${id}/delete`,{}).then( res=> {
+                    console.log(res.data);
+                    if(res.data.code == 500){
+                        layer.msg("删除失败");
+                    }else{
+                        layer.msg("删除成功");
+                        _this.noteCategories = categoryData.map(function (item) {
+                            if(item.id == categoryId){
+                                item.notes = item.notes.filter(function (noteItem) {
+                                    if(noteItem.id != id){
+                                        return noteItem;
+                                    }
+                                })
+                            }
+                            return item;
+                        });
+                        _this.mdInit();
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            });
+        },
+        selectCoverPicture:function (event) {
+            let file = event.target.files[0];
+            let imageArray = this.coverPictures;
+            let _this = this;
+
+            uploadPicture(file,function (res) {
+                console.log(res);
+                imageArray.push({image:IMAGE_URL+res.key,name:file.name,show:false});
+                _this.coverPictures = imageArray;
+            },function (res) {
+                //var total = res.total;
+                console.log(res)
+            },function (res) {
+                console.log("出错了")
+            },ZONE);
+
+        },
+        /**
+         * 进入封面事件
+         **/
+        enterCover:function(name){
+            console.log("进入");
+            let imageArray = this.coverPictures;
+            this.coverPictures = imageArray.map(function (item) {
+                if(item.name == name){
+                    item.show = true;
+                }
+                return item;
+            });
+        },
+
+        /**
+         * 封面移出事件
+         **/
+        leaveCover:function(name){
+            let imageArray = this.coverPictures;
+            this.coverPictures = imageArray.map(function (item) {
+                if(item.name == name){
+                    item.show = false;
+                }
+                return item;
+            });
+        },
+        deleteImage:function (name) {
+            let imageArray = this.coverPictures;
+            this.coverPictures = imageArray.filter(function (item) {
+                if(item.name != name){
+                    return item;
+                }
+            });
         }
+
     }
-})
+});

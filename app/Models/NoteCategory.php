@@ -23,11 +23,21 @@ class NoteCategory extends BaseModel
     /** 笔记簿名字 **/
     const FIELD_NAME = 'name';
 
+    /** 用途 **/
+    const FIELD_USE_TYPE = 'use_type';
+
     /** 类型 **/
     const FIELD_TYPE = 'type';
 
     /** 状态 **/
     const FIELD_STATUS = 'status';
+
+    /** 日志 **/
+    const ENUM_USE_TYPE_NOTE = 1;
+    /** 大学成长日志 **/
+    const ENUM_USE_TYPE_COLLEGE = 2;
+    /** 代码教程 **/
+    const ENUM_USE_TYPE_CODING = 3;
 
     /** 公开 **/
     const ENUM_TYPE_PRIVATE = 1;
@@ -41,6 +51,7 @@ class NoteCategory extends BaseModel
         self::FIELD_ID_WEB_USER,
         self::FIELD_NAME,
         self::FIELD_TYPE,
+        self::FIELD_USE_TYPE,
         self::FIELD_STATUS
     ];
 

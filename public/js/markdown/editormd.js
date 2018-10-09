@@ -718,7 +718,7 @@
                 showTrailingSpace         : settings.showTrailingSpace,
                 highlightSelectionMatches : ( (!settings.matchWordHighlight) ? false : { showToken: (settings.matchWordHighlight === "onselected") ? false : /\w/ } )
             };
-            
+
             this.codeEditor = this.cm        = editormd.$CodeMirror.fromTextArea(this.markdownTextarea[0], codeMirrorConfig);
             this.codeMirror = this.cmElement = editor.children(".CodeMirror");
             
@@ -3970,7 +3970,10 @@
         } else {
             saveTo.remove();
         }
-        
+
+        //清除之前的内容
+        $('#viewMd').html('');
+
         div.addClass("markdown-body " + this.classPrefix + "html-preview").append(markdownParsed);
         
         var tocContainer = (settings.tocContainer !== "") ? $(settings.tocContainer) : div;

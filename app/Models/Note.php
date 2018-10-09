@@ -28,15 +28,24 @@ class Note extends BaseModel
     /** 笔记的封面 */
     const FIELD_ATTACHMENTS = 'attachments';
 
+    /** 用途 **/
+    const FIELD_USE_TYPE = 'use_type';
+
     /** 类型 **/
     const FIELD_TYPE = 'type';
 
     /** 状态 **/
     const FIELD_STATUS = 'status';
 
+    /** 日志 **/
+    const ENUM_USE_TYPE_NOTE = 1;
+    /** 大学成长日志 **/
+    const ENUM_USE_TYPE_COLLEGE = 2;
+    /** 代码教程 **/
+    const ENUM_USE_TYPE_CODING = 3;
+
     /** 公开 **/
     const ENUM_TYPE_PRIVATE = 1;
-
     /** 私密 */
     const ENUM_TYPE_PUBLIC = 2;
 
@@ -50,6 +59,7 @@ class Note extends BaseModel
         self::FIELD_TITLE,
         self::FIELD_CONTENT,
         self::FIELD_ATTACHMENTS,
+        self::FIELD_USE_TYPE,
         self::FIELD_TYPE,
         self::FIELD_STATUS
     ];

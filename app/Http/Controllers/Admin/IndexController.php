@@ -29,7 +29,9 @@ class IndexController extends Controller
         //$user = request()->get('user');
         //$app = $user->app();
 
-        return view('admin.index');
+        $token = app(QiNiuService::class)->getToken();
+
+        return view('admin.index',["token"=>$token]);
     }
 
     /**

@@ -9,8 +9,8 @@
 namespace App\Http\Service;
 
 
+use App\Exceptions\WebException;
 use App\Models\Note as Model;
-use PhpParser\Node\Expr\AssignOp\Mod;
 
 class NoteService
 {
@@ -57,5 +57,37 @@ class NoteService
         return $result;
     }
 
+    /**
+     * 根据日志类目删除日志
+     *
+     * @author yezi
+     * @param $categoryId
+     * @return mixed
+     */
+    public function deleteByCategory($categoryId)
+    {
+        $result = Model::query()->where(Model::FIELD_ID_CATEGORY,$categoryId)->delete();
+        return $result;
+    }
+
+    /**
+     * 根据主键删除日志
+     *
+     * @author yezi
+     * @param $id
+     * @return bool|mixed|null
+     * @throws WebException
+     */
+    public function deleteById($id)
+    {
+        $note = $this->getNoteById($id);
+        if(!$note){
+            throw new WebException("日志不存在");
+        }
+
+        $result = $note->delete();
+
+        return $result;
+    }
 
 }

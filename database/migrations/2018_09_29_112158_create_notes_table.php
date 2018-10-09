@@ -22,6 +22,7 @@ class CreateNotesTable extends Migration
 
             $table->jsonb("attachments")->comment("封面图片，暂时为空");
 
+            $table->tinyInteger("use_type")->default(1)->comment("使用类型，1=日志，2=成长日志，3=代码教程");
             $table->tinyInteger("type")->default(1)->comment("日记簿类型，1=公开，2=私密");
             $table->tinyInteger("status")->default(1)->comment("状态");
 

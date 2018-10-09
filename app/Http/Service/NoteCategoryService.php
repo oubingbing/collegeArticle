@@ -9,6 +9,7 @@
 namespace App\Http\Service;
 
 
+use App\Exceptions\WebException;
 use App\Models\Note;
 use App\Models\NoteCategory as Model;
 use App\Models\NoteCategory;
@@ -97,12 +98,27 @@ class NoteCategoryService
         return $result;
     }
 
+    /**
+     * 根据分类ID获取用户的日志类目
+     *
+     * @author yezi
+     * @param $userId
+     * @param $categoryId
+     * @return \Illuminate\Database\Eloquent\Model|null|object|static
+     */
     public function getCategoryById($userId,$categoryId)
     {
         $result = Model::query()->where(Model::FIELD_ID_WEB_USER,$userId)->where(Model::FIELD_ID,$categoryId)->first();
         return $result;
     }
 
+    /**
+     * 格式化单条数据
+     *
+     * @author yezi
+     * @param $item
+     * @return mixed
+     */
     public function formatSingle($item)
     {
         if(!isset($item[Model::REL_NOTE])){
@@ -113,6 +129,27 @@ class NoteCategoryService
         }
 
         return $item;
+    }
+
+    /**
+     * 删除日志类目
+     *
+     * @author yezi
+     * @param $userId
+     * @param $categoryId
+     * @return mixed
+     * @throws WebException
+     */
+    public function delete($userId,$categoryId)
+    {
+        $category = $this->getCategoryById($userId,$categoryId);
+        if(!$category){
+            throw new WebException("日记类目不存在",500);
+        }
+
+        $result = $category->delete();
+
+        return $result;
     }
 
 }

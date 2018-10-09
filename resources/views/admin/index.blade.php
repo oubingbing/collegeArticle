@@ -200,6 +200,9 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        border-bottom-style:solid;
+        border-width:1px;
+        border-color: #E1E1E1;
     }
 
     .content-header .header-left{
@@ -243,6 +246,58 @@
         border-radius: 5px;
     }
 
+    .delete-note{
+        margin-left: 20px;
+    }
+
+    .image-container{
+        width: 100%;
+        height: 150px;
+        background: white;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        border-bottom-style:solid;
+        border-width:1px;
+        border-color: #E1E1E1;
+    }
+
+    .image-container .label{
+        margin-left: 30px;
+        width: 10%;
+    }
+
+    .image-container .image-content{
+        width: 75%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .image-content img{
+        width: 100px;
+        height:100px;
+    }
+
+    .image-content .cover-container{
+        margin-right: 10px;
+    }
+
+    .cover-container .delete-container{
+        width: 100px;
+        height: 100px;
+        z-index: 20;
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background:rgba(2,2,2,0.6);
+        border-top-left-radius: 5px;
+        border-top-right-radius: 5px;
+        color: #009688;
+    }
+
 </style>
 @section('content')
 <body>
@@ -269,24 +324,6 @@
      <!-- 左侧菜单开始 -->
     <div class="left-nav">
       <div id="side-nav">
-        <ul id="nav">
-            <li>
-                <a href="javascript:;">
-                    <i class="iconfont">&#xe6b8;</i>
-                    <cite>文章</cite>
-                    <i class="iconfont nav_right">&#xe697;</i>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a _href="{{ asset('admin/article/create') }}">
-                            <i class="iconfont">&#xe6a7;</i>
-                            <cite>新建文章</cite>
-                        </a>
-                    </li >
-                </ul>
-            </li>
-        </ul>
-
           <div class="create-container" v-cloak>
               <div class="create-header" v-on:click="createDir()">
                   <img src="{{asset('images/file.png')}}" alt="">
@@ -307,7 +344,7 @@
                               </div>
                               <div class="title-right" v-if="category.showBackgroud == true">
                                   <img src="{{asset('images/edit-category.png')}}" style="width: 25px;height: 20px" alt="">
-                                  <img src="{{asset('images/delete-category.png')}}" style="width: 25px;height: 20px" alt="">
+                                  <img src="{{asset('images/delete-category.png')}}" style="width: 25px;height: 20px" alt="" v-on:click="deleteCategory(category.id)">
                               </div>
                           </div>
                           <transition name="fade">
@@ -330,7 +367,6 @@
                                                      lay-verify="required"
                                                      autocomplete="off"
                                                      v-model="noteName"
-                                                     placeholder="笔记"
                                                      class="layui-input">
                                           </div>
                                           <div class="layui-form-mid layui-word-aux">
@@ -379,30 +415,44 @@
     <!-- <div class="x-slide_left"></div> -->
     <!-- 左侧菜单结束 -->
     <!-- 右侧主体开始 -->
-    <div class="page-content">
+    <div class="page-content" v-cloak>
         <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
-          <div class="content-header">
-              <div class="header-left">
-                  <h2 class="title">@{{note.title}}</h2>
-              </div>
-              <div class="header-right">
-                  <div class="operate-button">
-                      <button class="save-button" v-on:click="saveEdit()" v-if="showSave == true">保存</button>
-                      <button class="edit-button" v-if="showEdit == true">编辑</button>
-                      <button class="edit-button">删除</button>
-                  </div>
-              </div>
-          </div>
-          <div class="content-body">
-              <div class="layui-input-inline" id="editormd" v-if="showEdit == true">
-                  <textarea style="display:none;"></textarea>
-              </div>
+            <div class="content-header">
+                <div class="header-left">
+                    <h2 class="title">@{{note.title}}</h2>
+                </div>
+                <div class="header-right">
+                    <div class="operate-button">
+                        <button class="save-button" v-on:click="saveEdit()" v-show="showSave">保存</button>
+                        <button class="edit-button" v-on:click="showEditMd()" v-show="showEdit">编辑</button>
+                        <button class="edit-button delete-note" v-show="showDelete" v-on:click="deleteNote()">删除</button>
+                    </div>
+                </div>
+            </div>
 
-              <div class="layui-input-inline" id="viewMd">
-                  <textarea style="display:none;"></textarea>
-              </div>
+            <div class="image-container">
+                <div class="label"><h3>封面图片</h3></div>
+                <div class="image-content">
+                    <div v-for="image in coverPictures" class="cover-container" @mouseenter="enterCover(image.name)" @mouseleave="leaveCover(image.name)">
+                        <div class="delete-container" v-show="image.show" v-on:click="deleteImage(image.name)">
+                            <img src="{{asset('images/remove-img.png')}}" alt="删除" style="width: 30px;height: 30px">
+                        </div>
+                        <img v-bind:src="image.image">
+                    </div>
+                    <img src="{{asset('images/select-image.png')}}" alt="" onclick="javascript:$('#cover-picture').click()">
+                    <input type="file" id="cover-picture" style="display: none" class="layui-input" @change="selectCoverPicture($event)"/>
+                </div>
+            </div>
 
-          </div>
+            <div class="content-body">
+                <div id="editormd" v-show="showMd">
+                    <textarea style="display:none;"></textarea>
+                </div>
+                <div id="viewMd" style="height: 800px" v-show="!showMd">
+                    <textarea style="display:none;"></textarea>
+                </div>
+            </div>
+
         </div>
     </div>
     <div class="page-content-bg"></div>
@@ -414,7 +464,8 @@
     </div>
     <!-- 底部结束 -->
 </div>
-<script type="text/javascript" src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://unpkg.com/qiniu-js@2.0/dist/qiniu.min.js"></script>
+<script type="text/javascript" src="{{asset('js/upload.js')}}"></script>
 <script src="{{asset('js/markdown/editormd.js')}}"></script>
 <script src="{{asset('lib/marked.min.js')}}"></script>
 <script src="{{asset('lib/prettify.min.js')}}"></script>
@@ -425,12 +476,11 @@
 <script src="{{asset('lib/jquery.flowchart.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/note-index.js')}}"></script>
 <script type="text/javascript">
-    const token = "";
+    const token = "{{$token}}";
     const IMAGE_URL = "{{env('QI_NIU_DOMAIN')}}";
     const ZONE = "z2";
     let editorMd = '';
     let viewMd = '';
-    let markdown = '最后奉上我的毕业照，哈哈。![](http://article.qiuhuiyi.cn/FhE88ouA973WQUAPN539IvaNBDVo)';
 
     $(function() {
         $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
@@ -444,19 +494,6 @@
             imageUploadURL : "{{asset('/admin/article/image_upload')}}",
         });
 
-        viewMd = editormd.markdownToHTML("viewMd", {
-            markdown        : markdown ,//+ "\r\n" + $("#append-test").text(),
-            htmlDecode      : "style,script,iframe",  // you can filter tags decode
-            tocm            : true,    // Using [TOCM]
-            tocContainer    : "#custom-toc-container", // 自定义 ToC 容器层
-            emoji           : true,
-            taskList        : true,
-            tex             : true,  // 默认不解析
-            flowChart       : true,  // 默认不解析
-            sequenceDiagram : true,  // 默认不解析
-        });
-
-        //viewMd.markdown = "php";
 
         $("#submit").on('click',function () {
             let title = $("#title").val();
@@ -468,45 +505,6 @@
                 console.log(result);
             });
         });
-
-        /**
-         * 监听图片上传
-         **/
-        $("#cover-picture").unbind("change").bind("change",function(){
-            var file = this.files[0];
-            uploadPicture(file,function (res) {
-                $("#img-cover").attr("src",IMAGE_URL+res.key);
-                $(".upload-success").css("display","");
-                $(".upload-none").css("display","none");
-            },function (res) {
-                var total = res.total;
-                console.log(total)
-            },function (res) {
-                console.log("出错了")
-            },ZONE);
-        });
-
-        /**
-         * 监听封面图片的删除icon
-         */
-        $(".image-container").on({
-            mouseover : function(){
-                if($("#img-cover").attr("src") != ''){
-                    $(".delete-container").css("display","");
-                }
-            } ,
-            mouseout : function(){
-                $(".delete-container").css("display","none");
-            }
-        });
-
-        $("#delete-cover").on('click',function () {
-            $("#img-cover").attr("src","");
-            $(".delete-container").css("display","none");
-            $(".upload-none").css("display","");
-            $(".upload-success").css("display","none");
-            layer.msg("封面已移除");
-        })
 
     });
 </script>

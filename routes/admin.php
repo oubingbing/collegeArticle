@@ -36,10 +36,17 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
         /** 创建笔记 **/
         Route::post("note/create","NoteController@createNote");
 
+        /** 获取日志详情 **/
         Route::get("note/{categoryId}/{noteId}","NoteController@detail");
 
+        /** 编辑日志 **/
         Route::post("note/update/{id}","NoteController@edit");
 
+        /** 删除日志类目 **/
+        Route::post("note_category/{id}/delete","NoteCategoryController@deleteCategory");
+
+        /** 删除日志 **/
+        Route::post("note/{id}/delete","NoteController@deleteNote");
 });
 
 /** 退出登录 */
