@@ -9,13 +9,10 @@
  * {@link       https://github.com/pandao/editor.md}
  * @updateTime  2015-06-09
  */
+"use strict";
 
 ;(function(factory) {
-    "use strict";
 
-    //$.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
-    
-	// CommonJS/Node.js
 	if (typeof require === "function" && typeof exports === "object" && typeof module === "object")
     { 
         module.exports = factory;
