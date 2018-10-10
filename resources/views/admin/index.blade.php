@@ -532,7 +532,7 @@
 
         editorMd = editormd("editormd", {
             width: "100%",
-            height: 700,
+            height: 550,
             markdown : "",
             path : "/lib/",
             imageUpload : true,
