@@ -2,105 +2,66 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Models\Admin;
-use App\Models\User;
+use App\Exceptions\WebException;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use App\Http\Service\AuthService;
+use Illuminate\Http\Request;
 
 class RegisterController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Register Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users as well as their
-    | validation and creation. By default this controller uses a trait to
-    | provide this functionality without requiring any additional code.
-    |
-    */
+    private $authService;
 
-    use RegistersUsers;
-
-    /**
-     * Where to redirect users after registration.
-     *
-     * @var string
-     */
-    protected $redirectTo = '/home';
-
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    public function __construct(AuthService $authService)
     {
-        $this->middleware('guest');
+        $this->authService = $authService;
     }
 
     /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
-        ]);
-    }
-
-    /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return \App\Models\User
-     */
-    protected function create(array $data)
-    {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
-    }
-
-    /**
-     * 激活账号
+     * 注册视图
      *
      * @author yezi
-     *
-     * @return obj
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function active()
+    public function registerView()
     {
-        $token = request()->input('token');
+        return view('auth.register');
+    }
 
-        if(!$token){
-            abort(404);
+    /**
+     * 注册
+     *
+     * @author yezi
+     * @param Request $request
+     * @return mixed
+     * @throws WebException
+     */
+    public function register(Request $request)
+    {
+        $nickname = request()->input("nickname");
+        $phone = request()->input("phone");
+        $password = request()->input("password");
+
+        $validPhone = validMobile($phone);
+        if(!$validPhone){
+            throw new WebException("手机号码格式不正确");
         }
 
-        $result = Admin::query()
-            ->where(Admin::FIELD_ACTIVE_TOKEN,$token)
-            ->where(Admin::FIELD_STATUS,Admin::ENUM_STATUS_SLEEP)
-            ->first();
-        if(!$result){
-            abort('404');
+        $valid = $this->authService->validRegister($request);
+        if(!$valid['valid']){
+            throw new WebException($valid['message']);
         }
 
-        if(Carbon::now()->gt(Carbon::parse($result->{Admin::FIELD_TOKEN_EXPIRE}))){
-            return redirect('login');
-        }else{
-            $result->{Admin::FIELD_STATUS} = Admin::ENUM_STATUS_ACTIVATED;
-            $result->{Admin::FIELD_TOKEN_EXPIRE} = Carbon::now();
-            $result->save();
-            return view('auth.active');
+        try{
+            \DB::beginTransaction();
+
+            $result = $this->authService->createCustomer($nickname,$phone,$password);
+
+            \DB::commit();
+        }catch (\Exception $exception){
+            \DB::rollBack();
+            throw new WebException($exception);
         }
+
+        return $result;
     }
 }

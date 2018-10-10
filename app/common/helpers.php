@@ -81,6 +81,9 @@ if( ! function_exists('sendMessage') ){
     }
 }
 
+/**
+ * 分页
+ */
 if(!function_exists("paginate")){
     function paginate($query, $pageParams, $columns = null, $map = null){
         if ($columns === null || !is_array($columns)) {
@@ -105,5 +108,18 @@ if(!function_exists("paginate")){
             ],
             'page_data' => $items
         ];
+    }
+}
+
+/**
+ * 生成随机字符串
+ */
+if(!function_exists("randomKeys")){
+    function randomKeys($length){
+        $output='';
+        for ($a = 0; $a<$length; $a++) {
+            $output .= chr(mt_rand(33, 126));
+        }
+        return $output;
     }
 }

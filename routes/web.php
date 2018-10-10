@@ -1,8 +1,19 @@
 <?php
 
-/** 测试 */
-//App\Http\Controllers\App\Http\IM\IndexController
-Route::get('test_socket','IM\IndexController@chatRoom');
-Route::get('socket','IM\IndexController@socket');
-Route::get('bind','IM\IndexController@bindSocket');
-Route::post('send','IM\IndexController@sendSocket');
+
+Route::group(['namespace' => 'Frontend'], function () {
+    Route::get('/','IndexController@index');
+});
+
+Route::group(['namespace' => 'Auth'], function () {
+
+    Route::post("register","RegisterController@register");
+
+    Route::get("register","RegisterController@registerView");
+
+    /** 登录视图 **/
+    Route::get('/login','LoginController@loginView');
+
+    /** 登录 **/
+    Route::post("/login","LoginController@login");
+});

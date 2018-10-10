@@ -312,16 +312,7 @@ new Vue({
                     _this.coverPictures = res.data.attachments;
                     _this.note = res.data;
                     editorMd.setValue(_this.note.content);
-                    viewMd = editormd.markdownToHTML("viewMd", {
-                        markdown        : _this.note.content ,//+ "\r\n" + $("#append-test").text(),
-                        htmlDecode      : "style,script,iframe",  // you can filter tags decode
-                        tocm            : true,    // Using [TOCM]
-                        emoji           : true,
-                        taskList        : true,
-                        tex             : true,  // 默认不解析
-                        flowChart       : true,  // 默认不解析
-                        sequenceDiagram : true,  // 默认不解析
-                    });
+                    d
 
                 }else{
                     layer.msg(res.data.message);
@@ -399,7 +390,6 @@ new Vue({
                     if(res.data.code == 500){
                         layer.msg(res.data.message);
                     }else{
-                        layer.msg("删除成功");
                         _this.noteCategories = categoryData.filter(function (item) {
                             if(item.id != id){
                                 return item;
@@ -426,12 +416,25 @@ new Vue({
                     if(res.data.code == 500){
                         layer.msg(res.data.message);
                     }else{
-                        layer.msg("删除成功");
+                        _this.note = '';
+                        viewMd = editormd.markdownToHTML("viewMd", {
+                            markdown        : _this.note.content ,
+                            htmlDecode      : "style,script,iframe",
+                            tocm            : true,
+                            emoji           : true,
+                            taskList        : true,
+                            tex             : true,
+                            flowChart       : true,
+                            sequenceDiagram : true,
+                        });
+
                         _this.noteCategories = categoryData.map(function (item) {
                             if(item.id == categoryId){
                                 item.notes = item.notes.filter(function (noteItem) {
                                     if(noteItem.id != id){
                                         return noteItem;
+                                    }else{
+                                        console.log("删除");
                                     }
                                 })
                             }

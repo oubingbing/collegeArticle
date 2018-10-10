@@ -2,20 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']], function () {
 
     //Route::group(['middleware'=>['authUser']], function () {
-        /** 后台首页 */
-        Route::get('/','IndexController@index');
-
-        /** 后台主页 */
-        Route::get('/dashboard','IndexController@dashboard');
-
-        /** 获取小程序信息 */
-        Route::get('/app','AppController@appInfo');
-
-        /** 用户列表 */
-        Route::get('wechat_users','UserController@userList');
 
         /** 用户统计 */
         Route::get('user_statistics','UserController@userStatistics');

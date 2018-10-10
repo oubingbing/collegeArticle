@@ -26,7 +26,7 @@
 
                 form.on('submit(login)', function(data){
                     var fields = data.field;
-                    $.post("{{route('login')}}",fields,function(res){
+                    $.post("{{asset('login')}}",fields,function(res){
                         if(res.code === 404){
                             layer.msg(res.message)
                         }else{

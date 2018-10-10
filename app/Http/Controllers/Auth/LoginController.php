@@ -13,25 +13,7 @@ use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
 
-    use AuthenticatesUsers;
-
-    /**
-     * Where to redirect users after login.
-     *
-     * @var string
-     */
-    //protected $redirectTo = '/admin';
     protected $tokenService;
 
     /**
@@ -41,18 +23,7 @@ class LoginController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest')->except('logout');
         $this->tokenService = app(TokenService::class);
-    }
-
-    /**
-     * 默认是admin guard
-     *
-     * @return \Illuminate\Contracts\Auth\Guard|\Illuminate\Contracts\Auth\StatefulGuard|mixed
-     */
-    protected function guard()
-    {
-        return Auth::guard('admin');
     }
 
     /**
@@ -95,6 +66,16 @@ class LoginController extends Controller
         $userInfo = $weChatService->getSessionInfo($code,$iv,$encryptedData);
         $token = $this->tokenService->createToken($userInfo);
         return $token;
+    }
+
+    public function loginView()
+    {
+        return view("auth.login");
+    }
+
+    public function login()
+    {
+        return 'login';
     }
 
 }

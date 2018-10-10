@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>阿地力·阿布力克木</title>
+    <title>灯塔笔记</title>
     <link rel="stylesheet" href="{{asset('css/font.css')}}">
     <link rel="shortcut icon" href="{{ asset('img/logo.jfif') }}" type="image/x-icon">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -25,7 +25,7 @@
     <nav class="navbar navbar-inverse">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">湛江市赤坎区古卡饮品店</a>
+                <a class="navbar-brand" href="/">灯塔笔记</a>
             </div>
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -51,7 +51,7 @@
 
     <footer class="footer navbar-fixed-bottom">
         <div class="container footer">
-            <a href="http://www.miitbeian.gov.cn/">@2016-2018 湛江市赤坎区古卡饮品店 | 粤ICP备16004706号-1</a>
+            <a href="http://www.miitbeian.gov.cn/">@2016-2018 灯塔笔记 | 粤ICP备16004706号-1</a>
         </div>
     </footer>
 </div>
