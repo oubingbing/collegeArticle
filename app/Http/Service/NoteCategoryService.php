@@ -13,6 +13,7 @@ use App\Exceptions\WebException;
 use App\Models\Note;
 use App\Models\NoteCategory as Model;
 use App\Models\NoteCategory;
+use PhpParser\Node\Expr\AssignOp\Mod;
 
 class NoteCategoryService
 {
@@ -83,14 +84,16 @@ class NoteCategoryService
                     Note::FIELD_ID,
                     Note::FIELD_ID_CATEGORY,
                     Note::FIELD_TITLE,
-                    Note::FIELD_TYPE
+                    Note::FIELD_TYPE,
+                    Note::FIELD_USE_TYPE
                 ]);
             }])
             ->where(Model::FIELD_ID_WEB_USER,$userId)
             ->select([
                 Model::FIELD_ID,
                 Model::FIELD_NAME,
-                Model::FIELD_TYPE
+                Model::FIELD_TYPE,
+                Model::FIELD_USE_TYPE
             ])
             ->orderBy(Model::FIELD_CREATED_AT,'ASC')
             ->get();
@@ -109,6 +112,20 @@ class NoteCategoryService
     public function getCategoryById($userId,$categoryId)
     {
         $result = Model::query()->where(Model::FIELD_ID_WEB_USER,$userId)->where(Model::FIELD_ID,$categoryId)->first();
+        return $result;
+    }
+
+    /**
+     * 根据分类ID获取用户的日志类目
+     *
+     * @author yezi
+     * @param $userId
+     * @param $categoryId
+     * @return \Illuminate\Database\Eloquent\Model|null|object|static
+     */
+    public function getCategory($categoryId)
+    {
+        $result = Model::query()->find($categoryId);
         return $result;
     }
 
@@ -148,6 +165,28 @@ class NoteCategoryService
         }
 
         $result = $category->delete();
+
+        return $result;
+    }
+
+    /**
+     * 更新日志簿名字
+     *
+     * @author yezi
+     * @param $name
+     * @param $id
+     * @return bool
+     * @throws WebException
+     */
+    public function updateName($name,$id)
+    {
+        $category = $this->getCategory($id);
+        if(!$category){
+            throw new WebException("笔记本不存在");
+        }
+
+        $category->{NoteCategory::FIELD_NAME} = $name;
+        $result = $category->save();
 
         return $result;
     }

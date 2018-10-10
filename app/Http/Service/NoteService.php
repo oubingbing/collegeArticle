@@ -14,19 +14,39 @@ use App\Models\Note as Model;
 
 class NoteService
 {
-    public function create($categoryId,$title,$content,$attachments,$type)
+    /**
+     * 新建笔记
+     *
+     * @author yezi
+     * @param $categoryId
+     * @param $title
+     * @param $content
+     * @param $attachments
+     * @param $useType
+     * @param $type
+     * @return mixed
+     */
+    public function create($categoryId,$title,$content,$attachments,$useType,$type)
     {
         $result = Model::create([
             Model::FIELD_ID_CATEGORY=>$categoryId,
             Model::FIELD_TITLE=>$title,
             Model::FIELD_CONTENT=>$content,
             Model::FIELD_ATTACHMENTS=>empty($attachments)?[]:$attachments,
-            Model::FIELD_TYPE=>$type
+            Model::FIELD_TYPE=>$type,
+            Model::FIELD_USE_TYPE=>$useType
         ]);
 
         return $result;
     }
 
+    /**
+     * 格式化数据
+     *
+     *@author yezi
+     * @param $item
+     * @return mixed
+     */
     public function formatSingle($item)
     {
         if(!isset($item->{Model::FIELD_CONTENT})){
@@ -36,20 +56,45 @@ class NoteService
         return $item;
     }
 
+    /***
+     * 获取笔记
+     *
+     * @author yezi
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Model|null|object|static
+     */
     public function getNoteById($id)
     {
         $result = Model::query()->where(Model::FIELD_ID,$id)->first();
         return $result;
     }
 
-    public function updateContent($content,$note)
+    /**
+     * 更新笔记内容
+     *
+     * @author yezi
+     * @param $content
+     * @param $attachments
+     * @param $note
+     * @return mixed
+     */
+    public function updateContent($content,$attachments,$note)
     {
         $note->{Model::FIELD_CONTENT} = $content;
+        $note->{Model::FIELD_ATTACHMENTS} = $attachments;
         $result = $note->save();
 
         return $result;
     }
 
+    /**
+     * 更新标题
+     *
+     * @author yezi
+     * @param $title
+     * @param $note
+     * @return mixed
+     */
     public function updateTitle($title,$note)
     {
         $note->{Model::FIELD_TITLE} = $title;
@@ -87,6 +132,12 @@ class NoteService
 
         $result = $note->delete();
 
+        return $result;
+    }
+
+    public function checkRepeat($name,$categoryId)
+    {
+        $result = Model::query()->where(Model::FIELD_TITLE,$name)->where(Model::FIELD_ID_CATEGORY,$categoryId)->first();
         return $result;
     }
 

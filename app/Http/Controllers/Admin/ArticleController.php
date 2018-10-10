@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\ApiException;
+use App\Exceptions\WebException;
 use App\Http\Controllers\Controller;
 use App\Http\Service\CollegeArticleService;
 use App\Http\Service\QiNiuService;
@@ -66,7 +67,7 @@ class ArticleController extends Controller
         $filePath =  $request->file('editormd-image-file')->path();
         $token = app(QiNiuService::class)->getToken();
         if($token == ''){
-            return webResponse("获取token失败",500);
+            throw new WebException("获取token失败");
         }
 
         $result = app(QiNiuService::class)->uploadImage($token,$filePath);

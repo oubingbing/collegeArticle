@@ -1,8 +1,11 @@
+"use strict";
+
 new Vue({
     el: '#app',
     data: {
         name:'bingbing',
         noteCategories:[],
+        coverPictures:[],
         showCreateCategory:false,
         showCreateNote:false,
         categoryName:'',
@@ -12,7 +15,11 @@ new Vue({
         showMd:true,
         showDelete:false,
         showSave:false,
-        coverPictures:[]
+        showSelectImageIcon:false,
+        showCoverContainer:false,
+        showRenameCategory:false,
+        renameCategoryValue:'',
+        renameNoteValue:''
     },
     created:function () {
         this.getCategories();
@@ -31,15 +38,21 @@ new Vue({
             this.noteCategories = categoryData.map(function (item) {
                 if(item.id == id){
                     item.showBackgroud = true;
+                    item.showOperate = true;
                 }else{
                     item.showBackgroud = false;
+                    item.showOperate = false;
                 }
                 return item;
             })
         },
 
         leaveNoteCategory:function () {
-
+            let categoryData = this.noteCategories;
+            this.noteCategories = categoryData.map(function (item) {
+                item.showOperate = false;
+                return item;
+            })
         },
 
         /**
@@ -72,8 +85,10 @@ new Vue({
             category.notes.map(function (note) {
                 return _this.formatSingleNote(note);
             });
+            category.showRenameCategory = false;
             category.showNotes = false;
             category.showBackgroud = false;
+            category.showOperate = false;
             return category;
         },
 
@@ -87,6 +102,8 @@ new Vue({
             note.tap=false;
             note.enter=false;
             note.showCreateNote=false;
+            note.showEdit = false;
+            note.showRenameNote = false;
             return note;
         },
 
@@ -107,7 +124,7 @@ new Vue({
                     _this.hiddenCreateNote(id,_this);
                     _this.appendNote(res.data);
                 }else{
-                    layer.msg("新建失败");
+                    layer.msg(res.data.message);
                 }
             }).catch(function (error) {
                 console.log(error);
@@ -127,6 +144,7 @@ new Vue({
                 return item;
             })
         },
+
         /**
          * 添加日志到日志类目
          *
@@ -173,14 +191,14 @@ new Vue({
             let _this = this;
             axios.post("admin/note_category/create",{name:categoryName}).then( res=> {
                 console.log(res.data);
-                if(res.data.code == 200){
+                if(res.data.code != 500){
                     _this.showCreateCategory = false;
                     _this.categoryName = '';
                     let categoryData = _this.noteCategories;
-                    categoryData.push(_this.formatSingleNoteCateGory(res.data.data));
+                    categoryData.push(_this.formatSingleNoteCateGory(res.data));
                     _this.noteCategories = categoryData;
                 }else{
-                    layer.msg("新建失败");
+                    layer.msg(res.data.message);
                 }
             }).catch(function (error) {
                 console.log(error);
@@ -218,8 +236,10 @@ new Vue({
                     item.notes = item.notes.map(function (sub) {
                         if(sub.id == noteId && sub.tap == false){
                             sub.enter = true;
+                            sub.showEdit = true;
                         }else{
                             sub.enter = false;
+                            sub.showEdit = false;
                         }
                         return sub;
                     })
@@ -236,6 +256,8 @@ new Vue({
             this.noteCategories = categoryData.map(function (item) {
                 item.notes = item.notes.map(function (sub) {
                     sub.enter = false;
+                    sub.showEdit = false;
+                    sub.showRenameNote = false;
                     return sub;
                 });
                 return item;
@@ -282,11 +304,14 @@ new Vue({
             //获取文章
             axios.get(`admin/note/${categoryId}/${noteId}`,{}).then( res=> {
                 if(res.data.code != 500){
+                    if(res.data.use_type != 1 ){
+                        _this.showCoverContainer = true;
+                    }else{
+                        _this.showCoverContainer = false;
+                    }
+                    _this.coverPictures = res.data.attachments;
                     _this.note = res.data;
-
                     editorMd.setValue(_this.note.content);
-                    console.log(_this.note.content);
-
                     viewMd = editormd.markdownToHTML("viewMd", {
                         markdown        : _this.note.content ,//+ "\r\n" + $("#append-test").text(),
                         htmlDecode      : "style,script,iframe",  // you can filter tags decode
@@ -309,14 +334,10 @@ new Vue({
          * 保存编辑内容
          */
         saveEdit:function () {
-            this.showEdit = true;
-            this.showMd = false;
-            this.showSave = false;
-
             let _this = this;
             this.note.content = editorMd.getValue();
 
-            axios.post(`admin/note/update/${this.note.id}`,{content:this.note.content}).then( res=> {
+            axios.post(`admin/note/update/${this.note.id}`,{content:this.note.content,attachments:this.coverPictures}).then( res=> {
                 console.log(res.data);
                 if(res.data.code != 500){
                     viewMd = editormd.markdownToHTML("viewMd", {
@@ -329,8 +350,11 @@ new Vue({
                         flowChart       : true,  // 默认不解析
                         sequenceDiagram : true,  // 默认不解析
                     });
+                    _this.showEdit = true;
+                    _this.showMd = false;
+                    _this.showSave = false;
                 }else{
-                    layer.msg("新建失败");
+                    layer.msg(res.data.message);
                 }
             }).catch(function (error) {
                 console.log(error);
@@ -344,6 +368,11 @@ new Vue({
             this.showEdit = false;
             this.showMd = true;
             this.showSave = true;
+            if(this.note.attachments.length < 3 && this.note.use_type != 1){
+                this.showSelectImageIcon = true;
+            }else{
+                this.showSelectImageIcon = false;
+            }
         },
         /**
          * 初始化markdown参数
@@ -368,7 +397,7 @@ new Vue({
                 axios.post(`admin/note_category/${id}/delete`,{}).then( res=> {
                     console.log(res.data);
                     if(res.data.code == 500){
-                        layer.msg("删除失败");
+                        layer.msg(res.data.message);
                     }else{
                         layer.msg("删除成功");
                         _this.noteCategories = categoryData.filter(function (item) {
@@ -395,7 +424,7 @@ new Vue({
                 axios.post(`admin/note/${id}/delete`,{}).then( res=> {
                     console.log(res.data);
                     if(res.data.code == 500){
-                        layer.msg("删除失败");
+                        layer.msg(res.data.message);
                     }else{
                         layer.msg("删除成功");
                         _this.noteCategories = categoryData.map(function (item) {
@@ -415,49 +444,67 @@ new Vue({
                 });
             });
         },
+
+        /**
+         * 选择图片并且上传到七牛
+         *
+         * @param event
+         */
         selectCoverPicture:function (event) {
             let file = event.target.files[0];
             let imageArray = this.coverPictures;
             let _this = this;
 
             uploadPicture(file,function (res) {
-                console.log(res);
                 imageArray.push({image:IMAGE_URL+res.key,name:file.name,show:false});
                 _this.coverPictures = imageArray;
+                if(_this.coverPictures.length >= 3){
+                    _this.showSelectImageIcon = false;
+                }
             },function (res) {
                 //var total = res.total;
                 console.log(res)
             },function (res) {
-                console.log("出错了")
+                layer.msg("添加图片失败");
             },ZONE);
 
         },
+
         /**
          * 进入封面事件
          **/
         enterCover:function(name){
-            console.log("进入");
-            let imageArray = this.coverPictures;
-            this.coverPictures = imageArray.map(function (item) {
-                if(item.name == name){
-                    item.show = true;
-                }
-                return item;
-            });
+            if(this.showSave == true){
+                let imageArray = this.coverPictures;
+                this.coverPictures = imageArray.map(function (item) {
+                    if(item.name == name){
+                        item.show = true;
+                    }
+                    return item;
+                });
+            }
         },
 
         /**
          * 封面移出事件
          **/
         leaveCover:function(name){
-            let imageArray = this.coverPictures;
-            this.coverPictures = imageArray.map(function (item) {
-                if(item.name == name){
-                    item.show = false;
-                }
-                return item;
-            });
+            if(this.showSave == true){
+                let imageArray = this.coverPictures;
+                this.coverPictures = imageArray.map(function (item) {
+                    if(item.name == name){
+                        item.show = false;
+                    }
+                    return item;
+                });
+            }
         },
+
+        /**
+         * 移除图片
+         *
+         * @param name
+         */
         deleteImage:function (name) {
             let imageArray = this.coverPictures;
             this.coverPictures = imageArray.filter(function (item) {
@@ -465,7 +512,129 @@ new Vue({
                     return item;
                 }
             });
-        }
 
+            if(this.coverPictures.length < 3){
+                this.showSelectImageIcon = true;
+            }
+        },
+
+        renameCategory:function (id) {
+            let _this = this;
+            this.noteCategories = this.noteCategories.map(function (item) {
+                if(item.id == id){
+                    item.showRenameCategory = true;
+                    _this.renameCategoryValue = item.name;
+                }else{
+                    item.showRenameCategory = false;
+                }
+                return item;
+            })
+        },
+        enterRenameCategory:function (name) {
+
+        },
+        /**
+         * 监听重命名鼠标移除事件
+         *
+         * @author yezi
+         * @param id
+         * @param type
+         * @returns {boolean}
+         */
+        leaveRenameCategory:function(id,type){
+            let name = this.renameCategoryValue;
+            if(name == '' || type != 1){
+                this.renameCategoryValue = '';
+                this.noteCategories = this.noteCategories.map(function (item) {
+                    if(item.id == id){
+                        item.showRenameCategory = false;
+                        item.showBackgroud = true;
+                    }
+                    return item;
+                });
+                return false;
+            }
+
+            let _this = this;
+            axios.post(`admin/note_category/${id}/rename`,{name:name}).then( res=> {
+                console.log(res.data);
+                if(res.data.code == 500){
+                    layer.msg(res.data.message);
+                }else{
+                    _this.renameCategoryValue = '';
+                    _this.noteCategories = _this.noteCategories.map(function (item) {
+                        if(item.id == id){
+                            item.showRenameCategory = false;
+                            item.showBackgroud = true;
+                            item.name = name;
+                        }
+                        return item;
+                    });
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+
+        },
+
+        /**
+         * 点击编辑笔记标题
+         *
+         * @param id
+         */
+        renameNote:function (id) {
+            let _this = this;
+            this.noteCategories = this.noteCategories.map(function (item) {
+                item.notes = item.notes.map(function (sub) {
+                    if(id == sub.id){
+                        sub.enter = true;
+                        sub.showRenameNote = true;
+                        _this.renameNoteValue = sub.title;
+                    }else{
+                        sub.enter = false;
+                        sub.showRenameNote = false;
+                    }
+                    sub.showEdit = false;
+                    sub.tap = false;
+                    return sub;
+                });
+                return item;
+            })
+        },
+        leaveNoteInput:function (id,categoryId,title) {
+            let name = this.renameNoteValue;
+            if(name == '' || name == title){
+                return false;
+            }
+
+            let _this = this;
+            axios.post(`admin/note/${id}/rename`,{title:name}).then( res=> {
+                if(res.data.code == 500){
+                    layer.msg(res.data.message);
+                }else{
+                    _this.renameNoteValue = '';
+                    this.noteCategories = this.noteCategories.map(function (item) {
+                        if(categoryId == item.id){
+                            item.notes = item.notes.map(function (sub) {
+                                if(id == sub.id){
+                                    sub.enter = true;
+                                    sub.showRenameNote = false;
+                                    sub.title = name;
+                                }else{
+                                    sub.enter = false;
+                                    sub.showRenameNote = false;
+                                }
+                                sub.showEdit = false;
+                                sub.tap = false;
+                                return sub;
+                            });
+                        }
+                        return item;
+                    })
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        }
     }
 });

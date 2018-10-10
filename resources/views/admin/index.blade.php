@@ -88,7 +88,7 @@
         padding: 10px;
     }
 
-    .note-title .title-left{
+    .note-title .title-left,.rename-div{
         width: 80%;
         display: flex;
         flex-direction: row;
@@ -264,7 +264,7 @@
 
     .image-container .label{
         margin-left: 30px;
-        width: 10%;
+        width: 6%;
     }
 
     .image-container .image-content{
@@ -298,13 +298,29 @@
         color: #009688;
     }
 
+    .note-div,.renameNote-div{
+        width: 85%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .edit-note{
+        width: 15%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+    }
+
 </style>
 @section('content')
 <body>
 <div id="app">
     <!-- 顶部开始 -->
     <div class="container" style="background: #009688">
-        <div class="logo"><a href="./index.html">大学灯塔</a></div>
+        <div class="logo"><a href="./index.html">灯塔笔记</a></div>
         <div class="left_open">
             <i title="展开左侧栏" class="iconfont">&#xe699;</i>
         </div>
@@ -336,14 +352,26 @@
                           <div class="note-title"
                                 @mouseenter="enterNoteCategory(category.id)"
                                 @mouseleave="leaveNoteCategory()"
-                                v-bind:class="{moveCategory:category.showBackgroud}"
-                                v-on:click="showNoteList(category.id)">
-                              <div class="title-left">
-                                  <img src="{{asset('images/book.png')}}" alt="">
-                                  <span class="title-label">@{{ category.name }}</span>
+                                v-bind:class="{moveCategory:category.showBackgroud}">
+                              <div class="title-left" v-on:click="showNoteList(category.id)" v-show="!category.showRenameCategory">
+                                  <div class="title-div">
+                                      <img src="{{asset('images/book.png')}}" alt="">
+                                      <span class="title-label">@{{ category.name }}</span>
+                                  </div>
                               </div>
-                              <div class="title-right" v-if="category.showBackgroud == true">
-                                  <img src="{{asset('images/edit-category.png')}}" style="width: 25px;height: 20px" alt="">
+                              <div class="rename-div"
+                                   v-show="category.showRenameCategory"
+                                   @mouseenter="enterRenameCategory(category.name)"
+                                   @mouseleave="leaveRenameCategory(category.id,category.use_type)">
+                                  <input type="text"
+                                         v-model="renameCategoryValue"
+                                         v-show="category.showRenameCategory"
+                                         id="rename_category"
+                                         autocomplete="off"
+                                         class="layui-input">
+                              </div>
+                              <div class="title-right" v-if="category.showOperate == true && !category.showRenameCategory">
+                                  <img src="{{asset('images/edit-category.png')}}" style="width: 25px;height: 20px" alt="" v-on:click="renameCategory(category.id)">
                                   <img src="{{asset('images/delete-category.png')}}" style="width: 25px;height: 20px" alt="" v-on:click="deleteCategory(category.id)">
                               </div>
                           </div>
@@ -353,9 +381,20 @@
                                         @mouseenter="enterNote(category.id,note.id)"
                                         @mouseleave="leaveNote()"
                                        v-bind:class="{tap:note.tap,enter:note.enter}"
-                                       v-on:click="openNote(category.id,note.id)"
                                        v-for="note in category.notes">
-                                      <span v-bind:class="{titleColor:note.tap}">@{{ note.title }}</span>
+                                      <div class="note-div" v-show="!note.showRenameNote" v-on:click="openNote(category.id,note.id)">
+                                          <span v-bind:class="{titleColor:note.tap}">@{{ note.title }}</span>
+                                      </div>
+                                      <div class="renameNote-div" v-show="note.showRenameNote" @mouseleave="leaveNoteInput(note.id,category.id,note.title)">
+                                          <input type="text"
+                                                 v-model="renameNoteValue"
+                                                 id="rename_category"
+                                                 autocomplete="off"
+                                                 class="layui-input">
+                                      </div>
+                                      <div class="edit-note" v-show="note.showEdit">
+                                          <img src="{{asset('images/edit-category.png')}}" style="width: 25px;height: 20px" alt="" v-on:click="renameNote(note.id)">
+                                      </div>
                                   </div>
 
                                   <div class="create-dialog create-note" v-if="category.showCreateNote">
@@ -419,7 +458,8 @@
         <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
             <div class="content-header">
                 <div class="header-left">
-                    <h2 class="title">@{{note.title}}</h2>
+                    <h2 class="title" v-if="note.title">@{{note.title}}</h2>
+                    <h2 class="title" v-else>暂无内容</h2>
                 </div>
                 <div class="header-right">
                     <div class="operate-button">
@@ -430,7 +470,7 @@
                 </div>
             </div>
 
-            <div class="image-container">
+            <div class="image-container" v-show="showCoverContainer">
                 <div class="label"><h3>封面图片</h3></div>
                 <div class="image-content">
                     <div v-for="image in coverPictures" class="cover-container" @mouseenter="enterCover(image.name)" @mouseleave="leaveCover(image.name)">
@@ -439,7 +479,7 @@
                         </div>
                         <img v-bind:src="image.image">
                     </div>
-                    <img src="{{asset('images/select-image.png')}}" alt="" onclick="javascript:$('#cover-picture').click()">
+                    <img src="{{asset('images/select-image.png')}}" alt="" onclick="javascript:$('#cover-picture').click()" v-show="showSelectImageIcon">
                     <input type="file" id="cover-picture" style="display: none" class="layui-input" @change="selectCoverPicture($event)"/>
                 </div>
             </div>
@@ -483,7 +523,9 @@
     let viewMd = '';
 
     $(function() {
+
         $.ajaxSetup({headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')}});
+
         editorMd = editormd("editormd", {
             width: "100%",
             height: 800,
@@ -491,19 +533,7 @@
             path : "/lib/",
             imageUpload : true,
             imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
-            imageUploadURL : "{{asset('/admin/article/image_upload')}}",
-        });
-
-
-        $("#submit").on('click',function () {
-            let title = $("#title").val();
-            let content = $("#article").val();
-            let cover = $("#img-cover").attr("src");
-            let articleType = $("input[type='radio']:checked").val();
-
-            $.post("{{asset('admin/article/create')}}",{title:title,content:content,cover:cover,article_type:articleType},function(result){
-                console.log(result);
-            });
+            imageUploadURL : "{{asset('/admin/note/image_upload')}}",
         });
 
     });

@@ -7,25 +7,21 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
     //Route::group(['middleware'=>['authUser']], function () {
         /** 后台首页 */
         Route::get('/','IndexController@index');
+
         /** 后台主页 */
         Route::get('/dashboard','IndexController@dashboard');
+
         /** 获取小程序信息 */
         Route::get('/app','AppController@appInfo');
+
         /** 用户列表 */
         Route::get('wechat_users','UserController@userList');
+
         /** 用户统计 */
         Route::get('user_statistics','UserController@userStatistics');
+
         /** 用户列表 */
         Route::get('user/index','UserController@index');
-
-        /** 创建文章视图页面 */
-        Route::get('article/create',"ArticleController@createView");
-
-        /** 创建文章视图页面 */
-        Route::post('article/create',"ArticleController@create");
-
-        /** 文章上传图片 **/
-        Route::post('article/image_upload',"ArticleController@uploadImage");
 
         /** 创建笔记类别 **/
         Route::post("note_category/create","NoteCategoryController@create");
@@ -47,6 +43,15 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
 
         /** 删除日志 **/
         Route::post("note/{id}/delete","NoteController@deleteNote");
+
+        /** 文章上传图片 **/
+        Route::post('note/image_upload',"NoteController@uploadImage");
+
+        /** 重命名日志本 **/
+        Route::post("note_category/{id}/rename","NoteCategoryController@rename");
+
+        /** 重命名日志 **/
+        Route::post("note/{id}/rename","NoteController@editTitle");
 });
 
 /** 退出登录 */

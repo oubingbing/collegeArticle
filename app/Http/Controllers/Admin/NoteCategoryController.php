@@ -43,12 +43,22 @@ class NoteCategoryController extends Controller
 
         $checkRepeat = $this->noteCategoryService->checkRepeat($userId,$name);
         if($checkRepeat){
-            throw new ApiException("名字不能重复！",500);
+            throw new WebException("名字已存在！",500);
         }
 
-        $category = $this->noteCategoryService->create($userId,$name,$type);
+        try{
+            \DB::beginTransaction();
 
-        return webResponse("新建成功",200,$this->noteCategoryService->formatSingle($category));
+            $category = $this->noteCategoryService->create($userId,$name,$type);
+            $result = $this->noteCategoryService->formatSingle($category);
+
+            \DB::commit();
+        }catch (\Exception $exception){
+            \DB::rollBack();
+            throw new WebException($exception->getMessage());
+        }
+
+        return $result;
     }
 
     /**
@@ -67,10 +77,23 @@ class NoteCategoryController extends Controller
         return $notes;
     }
 
+    /**
+     * 删除日志类目
+     *
+     * @author yezi
+     * @param $id
+     * @return string
+     * @throws WebException
+     */
     public function deleteCategory($id)
     {
         //$userId = request()->get("user");
         $userId = 1;
+
+        $category = $this->noteCategoryService->getCategoryById($userId,$id);
+        if($category->{NoteCategory::FIELD_USE_TYPE} != NoteCategory::ENUM_USE_TYPE_NOTE){
+            throw new WebException("笔记本无法删除");
+        }
 
         try{
             \DB::beginTransaction();
@@ -80,11 +103,48 @@ class NoteCategoryController extends Controller
                 throw new WebException("删除失败！");
             }
 
-            $deleteNoteResult = $this->noteService->deleteByCategory($id);
-            if(!$deleteNoteResult){
-                throw new WebException("删除失败");
-            }
+            $this->noteService->deleteByCategory($id);
 
+            \DB::commit();
+        }catch (\Exception $exception){
+            \DB::rollBack();
+            throw new WebException($exception->getMessage());
+        }
+
+        return (string)$result;
+    }
+
+    public function rename($id)
+    {
+        $name = request()->input("name");
+        //$userId = request()->get("user");
+        $userId = 1;
+
+        if(empty($name)){
+            throw new WebException("名字不能为空");
+        }
+
+        $category = $this->noteCategoryService->getCategoryById($userId,$id);
+        if(!$category){
+            throw new WebException("笔记本不存在");
+        }
+
+        if($category->{NoteCategory::FIELD_USE_TYPE} != NoteCategory::ENUM_USE_TYPE_NOTE){
+            throw new WebException("笔记本无法重命名");
+        }
+
+        $checkRepeat = $this->noteCategoryService->checkRepeat($userId,$name);
+        if($checkRepeat){
+            throw new WebException("名字不能重复",500);
+        }
+
+        try{
+            \DB::beginTransaction();
+
+            $result = $this->noteCategoryService->updateName($name,$id);
+            if(!$result){
+                throw new WebException("重命名失败");
+            }
 
             \DB::commit();
         }catch (\Exception $exception){
