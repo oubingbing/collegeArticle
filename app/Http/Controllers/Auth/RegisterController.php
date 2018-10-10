@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Exceptions\WebException;
 use App\Http\Controllers\Controller;
 use App\Http\Service\AuthService;
+use App\Http\Service\CustomerService;
+use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class RegisterController extends Controller
@@ -55,6 +57,9 @@ class RegisterController extends Controller
             \DB::beginTransaction();
 
             $result = $this->authService->createCustomer($nickname,$phone,$password);
+
+            //初始化用户信息
+            app(CustomerService::class)->initCustomer($result->{Customer::FIELD_ID});
 
             \DB::commit();
         }catch (\Exception $exception){

@@ -38,8 +38,8 @@ class NoteCategoryController extends Controller
     {
         $name = request()->input("name");
         $type = request()->input("type",NoteCategory::ENUM_TYPE_PRIVATE);
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
 
         $checkRepeat = $this->noteCategoryService->checkRepeat($userId,$name);
         if($checkRepeat){
@@ -69,8 +69,8 @@ class NoteCategoryController extends Controller
      */
     public function categories()
     {
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
 
         $notes = $this->noteCategoryService->getNoteCategories($userId);
 
@@ -87,8 +87,8 @@ class NoteCategoryController extends Controller
      */
     public function deleteCategory($id)
     {
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
 
         $category = $this->noteCategoryService->getCategoryById($userId,$id);
         if($category->{NoteCategory::FIELD_USE_TYPE} != NoteCategory::ENUM_USE_TYPE_NOTE){
@@ -117,14 +117,13 @@ class NoteCategoryController extends Controller
     public function rename($id)
     {
         $name = request()->input("name");
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
 
         if(empty($name)){
             throw new WebException("名字不能为空");
         }
 
-        $category = $this->noteCategoryService->getCategoryById($userId,$id);
+        $category = $this->noteCategoryService->getCategoryById($user->id,$id);
         if(!$category){
             throw new WebException("笔记本不存在");
         }
@@ -133,7 +132,7 @@ class NoteCategoryController extends Controller
             throw new WebException("笔记本无法重命名");
         }
 
-        $checkRepeat = $this->noteCategoryService->checkRepeat($userId,$name);
+        $checkRepeat = $this->noteCategoryService->checkRepeat($user->id,$name);
         if($checkRepeat){
             throw new WebException("名字不能重复",500);
         }

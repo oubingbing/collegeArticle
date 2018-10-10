@@ -326,7 +326,7 @@
         </div>
         <ul class="layui-nav right" lay-filter="">
           <li class="layui-nav-item">
-            <a href="javascript:;">叶子</a>
+            <a href="javascript:;">{{$nickname}}</a>
             <dl class="layui-nav-child"> <!-- 二级菜单 -->
               <dd><a href="{{asset('logout')}}">退出</a></dd>
             </dl>

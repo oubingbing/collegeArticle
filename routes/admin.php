@@ -5,13 +5,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']], function () {
 
-    //Route::group(['middleware'=>['authUser']], function () {
+    Route::group(['middleware'=>['authUser']], function () {
 
-        /** 用户统计 */
-        Route::get('user_statistics','UserController@userStatistics');
-
-        /** 用户列表 */
-        Route::get('user/index','UserController@index');
+        /** 首页 **/
+        Route::get("/","IndexController@index");
 
         /** 创建笔记类别 **/
         Route::post("note_category/create","NoteCategoryController@create");
@@ -42,8 +39,7 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
 
         /** 重命名日志 **/
         Route::post("note/{id}/rename","NoteController@editTitle");
+    });
 });
 
-/** 退出登录 */
-Route::get('/logout','Auth\LoginController@logout')->middleware(['guest','web']);
 

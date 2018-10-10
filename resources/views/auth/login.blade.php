@@ -4,12 +4,12 @@
     <body class="login-bg">
 
     <div class="login layui-anim layui-anim-up">
-        <div class="message"><a href="{{ asset('/home') }}" style="color: white;">湛江市赤坎区古卡饮品店 - 后台登录</a></div>
+        <div class="message"><a href="{{ asset('/home') }}" style="color: white;">灯塔笔记 - 后台登录</a></div>
         <div id="darkbannerwrap"></div>
 
         <form method="post" class="layui-form">
             {{ csrf_field() }}
-            <input name="email" placeholder="邮箱"  type="text" lay-verify="required" class="layui-input" >
+            <input name="phone" placeholder="手机"  type="text" lay-verify="required" class="layui-input" >
             <hr class="hr15">
             <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
             <hr class="hr15">
@@ -27,17 +27,13 @@
                 form.on('submit(login)', function(data){
                     var fields = data.field;
                     $.post("{{asset('login')}}",fields,function(res){
-                        if(res.code === 404){
+                        if(res.code === 500){
                             layer.msg(res.message)
                         }else{
-                            if(res.code === 200){
-                                layer.msg(res.message);
-                                setTimeout(function () {
-                                    window.location.href = res.data;
-                                },1000)
-                            }else{
-                                layer.msg(res.message)
-                            }
+                            layer.msg("登录成功");
+                            setTimeout(function () {
+                                window.location.href = "/admin";
+                            },1500)
                         }
                     });
 

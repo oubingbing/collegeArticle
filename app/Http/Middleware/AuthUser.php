@@ -2,10 +2,9 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Admin;
-use App\Models\AdminApps;
+use App\Http\Service\AuthService;
+use App\Models\Customer;
 use Closure;
-use Illuminate\Support\Facades\Auth;
 
 class AuthUser
 {
@@ -18,15 +17,22 @@ class AuthUser
      */
     public function handle($request, Closure $next)
     {
-        $user = Auth::guard('admin')->user();
-
-        $app = AdminApps::query()->where(AdminApps::FIELD_ID_ADMIN,$user->id)->first();
-        if(!$app){
-            //新建APP
-            return redirect('admin/create_app');
+        $authService = app(AuthService::class);
+        if(!$authService->auth()){
+            return redirect('/login');
         }
 
-        $request->offsetSet('user',$user);
+        $customer = Customer::query()
+            ->where(Customer::FIELD_ID,$authService->authUser())
+            ->select([
+                Customer::FIELD_ID,
+                Customer::FIELD_NICKNAME,
+                Customer::FIELD_PHONE,
+                Customer::FIELD_AVATAR
+            ])
+            ->first();
+
+        $request->offsetSet('user',$customer);
 
         return $next($request);
     }

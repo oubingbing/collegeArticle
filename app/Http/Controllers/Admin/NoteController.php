@@ -41,8 +41,8 @@ class NoteController extends Controller
         $content = request()->input("content","");
         $attachments = request()->input("attachments",[]);
         $type = request()->input("type",Note::ENUM_TYPE_PRIVATE);
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
 
         $category = $this->noteCategoryService->getCategoryById($userId,$categoryId);
         if(!$category){
@@ -82,8 +82,8 @@ class NoteController extends Controller
      */
     public function detail($categoryId,$noteId)
     {
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
 
         $category = $this->noteCategoryService->getCategoryById($userId,$categoryId);
         if(!$category){
@@ -105,8 +105,8 @@ class NoteController extends Controller
      */
     public function edit($id)
     {
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
         $content = request()->input("content");
         $attachments = request()->input("attachments");
         if(is_null($content)){
@@ -158,8 +158,8 @@ class NoteController extends Controller
      */
     public function deleteNote($id)
     {
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
 
         try{
             \DB::beginTransaction();
@@ -213,8 +213,8 @@ class NoteController extends Controller
     public function editTitle($id)
     {
         $name = request()->input("title");
-        //$userId = request()->get("user");
-        $userId = 1;
+        $user = request()->get("user");
+        $userId = $user->id;
 
         if(empty($name)){
             throw new WebException("名字不能为空");

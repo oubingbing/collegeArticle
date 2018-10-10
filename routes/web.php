@@ -16,4 +16,6 @@ Route::group(['namespace' => 'Auth'], function () {
 
     /** 登录 **/
     Route::post("/login","LoginController@login");
+
+    Route::get("/logout","LoginController@logout");
 });

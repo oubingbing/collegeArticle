@@ -9,7 +9,9 @@
 namespace App\Http\Service;
 
 
+use App\Exceptions\WebException;
 use App\Models\Customer as Model;
+use Illuminate\Support\Facades\Crypt;
 
 class AuthService
 {
@@ -84,6 +86,47 @@ class AuthService
      */
     public function encrypt($password,$salt)
     {
-        return encrypt(md5($password).$salt);
+        return md5(md5($password.$salt).$salt);
+    }
+
+    public function getCustomerByPhone($phone)
+    {
+        $result = Model::query()->where(Model::FIELD_PHONE,$phone)->first();
+        return $result;
+    }
+
+    public function attempt($phone,$password)
+    {
+        $customer = $this->getCustomerByPhone($phone);
+        if(!$customer){
+            throw new WebException("用户不存在");
+        }
+
+        if($this->encrypt($password,$customer->{Model::FIELD_SALT}) != $customer->{Model::FIELD_PASSWORD}){
+            return false;
+        }else{
+            session(['customer_id' => $customer->id]);
+        }
+
+        return true;
+    }
+
+    public function auth()
+    {
+        if(session()->has("customer_id")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function authUser()
+    {
+        return session("customer_id");
+    }
+
+    public function clearCustomer()
+    {
+        session()->forget('customer_id');
     }
 }
