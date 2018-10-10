@@ -312,8 +312,6 @@ new Vue({
                     _this.coverPictures = res.data.attachments;
                     _this.note = res.data;
                     editorMd.setValue(_this.note.content);
-                    d
-
                 }else{
                     layer.msg(res.data.message);
                 }
