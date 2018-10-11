@@ -519,7 +519,7 @@
 <script src="{{asset('lib/jquery.flowchart.min.js')}}"></script>
 <script type="text/javascript" src="{{asset('js/note-index.js')}}"></script>
 <script type="text/javascript">
-    //'use strict';
+    'use strict';
     const token = "{{$token}}";
     const IMAGE_URL = "{{env('QI_NIU_DOMAIN')}}";
     const ZONE = "z2";
