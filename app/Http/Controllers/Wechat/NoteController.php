@@ -69,7 +69,7 @@ class NoteController extends Controller
      */
     public function detail($id)
     {
-        $result = Note::query()->where(Note::FIELD_ID,$id)->first();
+        $result = $this->noteService->getNoteById($id);
 
         return $result;
     }
