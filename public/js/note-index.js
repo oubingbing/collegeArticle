@@ -311,7 +311,17 @@ new Vue({
                     }
                     _this.coverPictures = res.data.attachments;
                     _this.note = res.data;
-                    editorMd.setValue(_this.note.content);
+
+                    editormd.markdownToHTML("viewMd", {
+                        markdown        : res.data.content ,
+                        htmlDecode      : "style,script,iframe",
+                        tocm            : true,
+                        emoji           : true,
+                        taskList        : true,
+                        tex             : true,
+                        flowChart       : true,
+                        sequenceDiagram : true,
+                    });
                 }else{
                     layer.msg(res.data.message);
                 }
@@ -353,7 +363,6 @@ new Vue({
          * 显示markdown编辑框
          */
         showEditMd:function () {
-            editorMd.setValue(this.note.content);
             this.showEdit = false;
             this.showMd = true;
             this.showSave = true;
@@ -362,6 +371,7 @@ new Vue({
             }else{
                 this.showSelectImageIcon = false;
             }
+            editorMd.setValue(this.note.content);
         },
         /**
          * 初始化markdown参数
@@ -388,6 +398,7 @@ new Vue({
                     if(res.data.code == 500){
                         layer.msg(res.data.message);
                     }else{
+                        layer.msg("删除成功");
                         _this.noteCategories = categoryData.filter(function (item) {
                             if(item.id != id){
                                 return item;
