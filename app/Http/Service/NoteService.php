@@ -164,7 +164,7 @@ class NoteService
      * @return $this
      */
     public function filter($type){
-        $this->builder->where(Model::FIELD_USE_TYPE,"!=",1)->where(Model::FIELD_CONTENT,"!=","");
+        $this->builder->where(Model::FIELD_USE_TYPE,$type)->where(Model::FIELD_CONTENT,"!=","");
 
         return $this;
     }
