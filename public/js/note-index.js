@@ -305,6 +305,7 @@ new Vue({
             axios.get(`admin/note/${categoryId}/${noteId}`,{}).then( res=> {
                 if(res.data.code != 500){
                     if(res.data.use_type != 1 ){
+                        console.log("显示");
                         _this.showCoverContainer = true;
                     }else{
                         _this.showCoverContainer = false;

@@ -31,7 +31,7 @@ class NoteCategoryService
         $result = Model::create([
             Model::FIELD_ID_WEB_USER=>$userId,
             Model::FIELD_NAME=>$name,
-            Model::FIELD_TYPE=>$type
+            Model::FIELD_USE_TYPE=>$type
         ]);
 
         return $result;

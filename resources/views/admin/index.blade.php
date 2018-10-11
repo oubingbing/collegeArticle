@@ -264,7 +264,7 @@
 
     .image-container .label{
         margin-left: 30px;
-        width: 6%;
+        width: 10%;
     }
 
     .image-container .image-content{
@@ -525,6 +525,7 @@
     const ZONE = "z2";
     let editorMd = '';
     let viewMd = '';
+    let windowHeight = document.documentElement.scrollHeight;
 
     $(function() {
 
@@ -532,7 +533,7 @@
 
         editorMd = editormd("editormd", {
             width: "100%",
-            height: 800,
+            height: (windowHeight*0.65),
             markdown : "",
             path : "/lib/",
             imageUpload : true,
