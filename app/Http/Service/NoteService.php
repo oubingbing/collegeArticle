@@ -14,6 +14,8 @@ use App\Models\Note as Model;
 
 class NoteService
 {
+    private $builder;
+
     /**
      * 新建笔记
      *
@@ -139,6 +141,58 @@ class NoteService
     {
         $result = Model::query()->where(Model::FIELD_TITLE,$name)->where(Model::FIELD_ID_CATEGORY,$categoryId)->first();
         return $result;
+    }
+
+    /**
+     * 构建查询构造器
+     *
+     * @author yezi
+     * @return $this
+     */
+    public function getBuilder()
+    {
+        $this->builder = Model::query();
+
+        return $this;
+    }
+
+    /**
+     * 过滤查询
+     *
+     * @author yezi
+     * @param $type
+     * @return $this
+     */
+    public function filter($type){
+        $this->builder->where(Model::FIELD_USE_TYPE,"!=",1)->where(Model::FIELD_CONTENT,"!=","");
+
+        return $this;
+    }
+
+    /**
+     * 排序
+     *
+     * @author yezi
+     * @param $orderBy
+     * @param $sort
+     * @return $this
+     */
+    public function sort($orderBy,$sort)
+    {
+        $this->builder->orderBy($orderBy,$sort);
+
+        return $this;
+    }
+
+    /**
+     * 构造查询语句结束
+     *
+     * @author yezi
+     * @return mixed
+     */
+    public function done()
+    {
+        return $this->builder;
     }
 
 }

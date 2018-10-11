@@ -11,15 +11,17 @@ namespace App\Http\Wechat;
 
 use App\Http\Controllers\Controller;
 use App\Http\Service\CollegeArticleService;
+use App\Http\Service\NoteService;
 use App\Models\CollegeArticle;
+use App\Models\Note;
 
-class CollegeArticleController extends Controller
+class NoteController extends Controller
 {
-    private $collegeService;
+    private $noteService;
 
-    public function __construct(CollegeArticleService $collegeArticleService)
+    public function __construct(NoteService $noteService)
     {
-        $this->collegeService = $collegeArticleService;
+        $this->noteService = $noteService;
     }
 
     /**
@@ -28,26 +30,30 @@ class CollegeArticleController extends Controller
      * @author yezi
      * @return array
      */
-    public function article()
+    public function noteList()
     {
         $orderBy = request()->input('order_by', 'created_at');
         $sortBy = request()->input('sort_by', 'desc');
         $filter = request()->input('filter');
         $pageSize = request()->input('page_size', 10);
         $pageNumber = request()->input('page_number', 1);
-        $type = CollegeArticle::ENUM_COLLEGE_NOTE;
+        $type = request()->input("note_type");
 
         $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
 
         $selectData = [
-            CollegeArticle::FIELD_ID,
-            CollegeArticle::FIELD_ID_POSTER,
-            CollegeArticle::FIELD_COVER_IMAGE,
-            CollegeArticle::FIELD_TITLE,
-            CollegeArticle::FIELD_CREATED_AT
+            Note::FIELD_ID,
+            Note::FIELD_TITLE,
+            Note::FIELD_ATTACHMENTS,
+            Note::FIELD_USE_TYPE,
+            Note::FIELD_ID_CATEGORY,
+            Note::FIELD_CREATED_AT
         ];
-        $query = $this->collegeService->getBuilder()->filter($type)->sort($orderBy,$sortBy)->done();
+        $query = $this->noteService->getBuilder()->filter($type)->sort($orderBy,$sortBy)->done();
         $result = paginate($query,$pageParams,$selectData,function ($item){
+            $item->{Note::FIELD_ATTACHMENTS} = collect($item->{Note::FIELD_ATTACHMENTS})->map(function ($item){
+               return $item["image"];
+            });
             return $item;
         });
 
@@ -63,7 +69,7 @@ class CollegeArticleController extends Controller
      */
     public function detail($id)
     {
-        $result = CollegeArticle::query()->where(CollegeArticle::FIELD_ID,$id)->first();
+        $result = Note::query()->where(Note::FIELD_ID,$id)->first();
 
         return $result;
     }
@@ -74,18 +80,17 @@ class CollegeArticleController extends Controller
      * @author yezi
      * @return array
      */
-    public function noteList()
+    public function noteCategoryList()
     {
         $orderBy = request()->input('order_by', 'created_at');
         $sortBy = request()->input('sort_by', 'desc');
         $filter = request()->input('filter');
         $pageSize = request()->input('page_size', 10);
         $pageNumber = request()->input('page_number', 1);
-        $type = CollegeArticle::ENUM_NOTE;
 
         $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
 
-        $selectData = [
+        /*$selectData = [
             CollegeArticle::FIELD_ID,
             CollegeArticle::FIELD_ID_POSTER,
             CollegeArticle::FIELD_COVER_IMAGE,
@@ -99,6 +104,6 @@ class CollegeArticleController extends Controller
             return $item;
         });
 
-        return $result;
+        return $result;*/
     }
 }

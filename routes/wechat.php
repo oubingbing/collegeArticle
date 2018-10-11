@@ -14,6 +14,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Wechat\CollegeArticleController;
 use App\Http\Wechat\LocationController;
+use App\Http\Wechat\NoteController;
 use App\Http\Wechat\TravelController;
 use App\Http\Wechat\UserController;
 
@@ -34,13 +35,13 @@ $api->version('v1', function ($api) {
             $api->get('/user',UserController::class . '@personal');
 
             /** 获取文章列表 **/
-            $api->get("/article",CollegeArticleController::class . "@article");
+            $api->get("/notes",NoteController::class . "@noteList");
 
             /** 获取日志列表 **/
-            $api->get("/notes",CollegeArticleController::class . "@noteList");
+            $api->get("/notes",NoteController::class . "@noteList");
 
             /** 获取文章详情 **/
-            $api->get("/article/{id}",CollegeArticleController::class . "@detail");
+            $api->get("/note/{id}",NoteController::class . "@detail");
         });
 
     });
