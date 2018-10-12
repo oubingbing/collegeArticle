@@ -44,7 +44,7 @@ class NoteController extends Controller
         $user = request()->get("user");
         $userId = $user->id;
 
-        if(count($attachments) == 1){
+        if(count($attachments) == 2){
             $attachments = $attachments[0];
         }elseif(count($attachments) > 3){
             $attachments = collect($attachments)->filter(function ($item,$index){
@@ -123,6 +123,16 @@ class NoteController extends Controller
         $attachments = request()->input("attachments");
         if(is_null($content)){
             throw new WebException("内容不能为空",500);
+        }
+
+        if(count($attachments) == 2){
+            $attachments = $attachments[0];
+        }elseif(count($attachments) > 3){
+            $attachments = collect($attachments)->filter(function ($item,$index){
+                if($index <= 2){
+                    return $item;
+                }
+            });
         }
 
         $note = $this->noteService->getNoteById($id);

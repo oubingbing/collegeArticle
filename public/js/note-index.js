@@ -433,6 +433,7 @@ new Vue({
                     if(res.data.code == 500){
                         layer.msg(res.data.message);
                     }else{
+                        layer.msg("删除成功");
                         _this.note = '';
                         viewMd = editormd.markdownToHTML("viewMd", {
                             markdown        : _this.note.content ,
