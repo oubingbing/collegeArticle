@@ -123,13 +123,11 @@
     .note-content .content-title{
         padding: 10px;
         color: gray;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
         cursor:pointer;
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
+        align-items: flex-start;
     }
 
     .content-title img{
@@ -291,15 +289,23 @@
         color: #009688;
     }
 
+    .note-div{
+
+    }
+
     .note-div,.renameNote-div{
+        float: right;
         width: 85%;
         display: flex;
         flex-direction: row;
+        overflow: hidden;
+        text-overflow:ellipsis;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
         justify-content: flex-start;
         align-items: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        text-align: left;
+        display: -webkit-box;
     }
 
     .edit-note{
