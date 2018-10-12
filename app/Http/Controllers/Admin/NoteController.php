@@ -71,7 +71,7 @@ class NoteController extends Controller
         try{
             \DB::beginTransaction();
 
-            $result = $this->noteService->create($categoryId,$user,$title,$content,$attachments,$useType,$type);
+            $result = $this->noteService->create($categoryId,$user->id,$title,$content,$attachments,$useType,$type);
             $result = $this->noteService->formatSingle($result);
 
             \DB::commit();

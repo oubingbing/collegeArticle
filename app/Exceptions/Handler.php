@@ -87,7 +87,17 @@ class Handler extends ExceptionHandler
             ];
             return response()->json($result);
         }
-        return parent::render($request, $e);
+
+        if(env("APP_ENV") != "dev"){
+            $result = [
+                "error_code"    => $e->getCode(),
+                "error_message" => "未知错误",
+                "data"          => null,
+            ];
+            return response()->json($result);
+        }else{
+            return parent::render($request, $e);
+        }
     }
 
 }
