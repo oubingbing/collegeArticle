@@ -44,6 +44,18 @@ class NoteController extends Controller
         $user = request()->get("user");
         $userId = $user->id;
 
+        if(count($attachments) == 1){
+            $attachments = $attachments[0];
+        }elseif(count($attachments) > 3){
+            $attachments = collect($attachments)->filter(function ($item,$index){
+               if($index <= 2){
+                   return $item;
+               }
+            });
+        }
+
+        $attachments = collect($attachments)->toArray();
+
         $category = $this->noteCategoryService->getCategoryById($userId,$categoryId);
         if(!$category){
             throw new WebException("日志本不存在");

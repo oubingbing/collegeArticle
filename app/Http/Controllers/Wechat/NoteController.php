@@ -51,9 +51,6 @@ class NoteController extends Controller
         ];
         $query = $this->noteService->getBuilder()->filter($type)->sort($orderBy,$sortBy)->done();
         $result = paginate($query,$pageParams,$selectData,function ($item){
-            $item->{Note::FIELD_ATTACHMENTS} = collect($item->{Note::FIELD_ATTACHMENTS})->map(function ($item){
-               return $item["image"];
-            });
             return $item;
         });
 

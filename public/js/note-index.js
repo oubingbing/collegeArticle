@@ -15,8 +15,6 @@ new Vue({
         showMd:true,
         showDelete:false,
         showSave:false,
-        showSelectImageIcon:false,
-        showCoverContainer:false,
         showRenameCategory:false,
         renameCategoryValue:'',
         renameNoteValue:''
@@ -304,12 +302,6 @@ new Vue({
             //获取文章
             axios.get(`admin/note/${categoryId}/${noteId}`,{}).then( res=> {
                 if(res.data.code != 500){
-                    if(res.data.use_type != 1 ){
-                        console.log("显示");
-                        _this.showCoverContainer = true;
-                    }else{
-                        _this.showCoverContainer = false;
-                    }
                     _this.coverPictures = res.data.attachments;
                     _this.note = res.data;
 
@@ -330,25 +322,45 @@ new Vue({
                 console.log(error);
             });
         },
+
+        getMarkdownPicture:function (content) {
+            const str = content;
+            const pattern = /!\[(.*?)\]\((.*?)\)/mg;
+            const result = [];
+            let matcher;
+
+            while ((matcher = pattern.exec(str)) !== null) {
+                result.push(matcher[2]);
+            }
+
+            return result;
+        },
+
         /**
          * 保存编辑内容
          */
         saveEdit:function () {
             let _this = this;
             this.note.content = editorMd.getValue();
+            let attachments = this.getMarkdownPicture(this.note.content);
+            attachments = attachments.filter(function (item,index) {
+                if(index<=2){
+                    return item;
+                }
+            });
 
-            axios.post(`admin/note/update/${this.note.id}`,{content:this.note.content,attachments:this.coverPictures}).then( res=> {
+            axios.post(`admin/note/update/${this.note.id}`,{content:this.note.content,attachments:attachments}).then( res=> {
                 console.log(res.data);
                 if(res.data.code != 500){
                     viewMd = editormd.markdownToHTML("viewMd", {
-                        markdown        : res.data.content ,//+ "\r\n" + $("#append-test").text(),
-                        htmlDecode      : "style,script,iframe",  // you can filter tags decode
-                        tocm            : true,    // Using [TOCM]
+                        markdown        : res.data.content ,
+                        htmlDecode      : "style,script,iframe",
+                        tocm            : true,
                         emoji           : true,
                         taskList        : true,
-                        tex             : true,  // 默认不解析
-                        flowChart       : true,  // 默认不解析
-                        sequenceDiagram : true,  // 默认不解析
+                        tex             : true,
+                        flowChart       : true,
+                        sequenceDiagram : true,
                     });
                     _this.showEdit = true;
                     _this.showMd = false;
@@ -367,11 +379,6 @@ new Vue({
             this.showEdit = false;
             this.showMd = true;
             this.showSave = true;
-            if(this.note.attachments.length < 3 && this.note.use_type != 1){
-                this.showSelectImageIcon = true;
-            }else{
-                this.showSelectImageIcon = false;
-            }
             editorMd.setValue(this.note.content);
         },
         /**
@@ -471,9 +478,6 @@ new Vue({
             uploadPicture(file,function (res) {
                 imageArray.push({image:IMAGE_URL+res.key,name:file.name,show:false});
                 _this.coverPictures = imageArray;
-                if(_this.coverPictures.length >= 3){
-                    _this.showSelectImageIcon = false;
-                }
             },function (res) {
                 //var total = res.total;
                 console.log(res)
@@ -525,10 +529,6 @@ new Vue({
                     return item;
                 }
             });
-
-            if(this.coverPictures.length < 3){
-                this.showSelectImageIcon = true;
-            }
         },
 
         renameCategory:function (id) {

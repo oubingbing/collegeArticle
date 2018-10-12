@@ -217,38 +217,31 @@
         margin-left: 30px;
     }
 
-    .content-header .header-right{
-        width: 50%;
+    .page-content .header-right{
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: flex-end;
         align-items: center;
+        position: fixed;
+        z-index: 100;
+        right: 50px;
+        top: 40%;
     }
 
     .header-right .operate-button{
-        margin-right: 30px;
+        display: flex;
+        flex-direction: column;
     }
 
-    .operate-button .save-button{
-        margin-right: 5px;
-    }
-
-    .operate-button button{
-        padding-top: 8px;
-        padding-bottom: 8px;
-        padding-left: 20px;
-        padding-right: 20px;
-        color: #009688;
-        border-style:solid;
-        border-width:1px;
-        border-color: #009688;
+    .operate-button img{
+        width: 50px;
+        height:50px;
+        margin-bottom: 10px;
+        margin-top: 10px;
         background: white;
-        border-radius: 5px;
+        border-radius: 25px;
     }
 
-    .delete-note{
-        margin-left: 20px;
-    }
 
     .image-container{
         width: 100%;
@@ -427,7 +420,6 @@
                           </transition>
                       </div>
                   </div>
-
               <div class="create-dialog" v-if="showCreateCategory">
                   <div class="create-category">
                       <div class="layui-input-inline">
@@ -458,35 +450,14 @@
     <!-- 左侧菜单结束 -->
     <!-- 右侧主体开始 -->
     <div class="page-content" v-cloak>
+        <div class="header-right" v-show="showDelete">
+            <div class="operate-button">
+                <img src="{{asset('images/save.png')}}" alt="" v-on:click="saveEdit()" v-show="showSave">
+                <img src="{{asset('images/edit.png')}}" alt="" v-on:click="showEditMd()" v-show="showEdit">
+                <img src="{{asset('images/delete-icon.png')}}" alt="" v-show="showDelete" v-on:click="deleteNote()">
+            </div>
+        </div>
         <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
-            <div class="content-header">
-                <div class="header-left">
-                    <h2 class="title" v-if="note.title">@{{note.title}}</h2>
-                    <h2 class="title" v-else>暂无内容</h2>
-                </div>
-                <div class="header-right">
-                    <div class="operate-button">
-                        <button class="save-button" v-on:click="saveEdit()" v-show="showSave">保存</button>
-                        <button class="edit-button" v-on:click="showEditMd()" v-show="showEdit">编辑</button>
-                        <button class="edit-button delete-note" v-show="showDelete" v-on:click="deleteNote()">删除</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="image-container" v-show="showCoverContainer">
-                <div class="label"><h3>封面图片</h3></div>
-                <div class="image-content">
-                    <div v-for="image in coverPictures" class="cover-container" @mouseenter="enterCover(image.name)" @mouseleave="leaveCover(image.name)">
-                        <div class="delete-container" v-show="image.show" v-on:click="deleteImage(image.name)">
-                            <img src="{{asset('images/remove-img.png')}}" alt="删除" style="width: 30px;height: 30px">
-                        </div>
-                        <img v-bind:src="image.image">
-                    </div>
-                    <img src="{{asset('images/select-image.png')}}" alt="" onclick="javascript:$('#cover-picture').click()" v-show="showSelectImageIcon">
-                    <input type="file" id="cover-picture" style="display: none" class="layui-input" @change="selectCoverPicture($event)"/>
-                </div>
-            </div>
-
             <div class="content-body">
                 <div id="editormd" v-show="showMd">
                     <textarea style="display:none;"></textarea>
@@ -533,7 +504,7 @@
 
         editorMd = editormd("editormd", {
             width: "100%",
-            height: (windowHeight*0.65),
+            height: (windowHeight*0.9),
             markdown : "",
             path : "/lib/",
             imageUpload : true,
