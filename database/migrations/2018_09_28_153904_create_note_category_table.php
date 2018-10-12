@@ -18,7 +18,7 @@ class CreateNoteCategoryTable extends Migration
             $table->bigInteger("web_user_id")->index()->comment("所属用户ID,网站后台用户");
             $table->string("name",128)->default("")->comment("日记簿名字");
 
-            $table->tinyInteger("use_type")->default(1)->comment("使用类型，1=日志，2=成长日志，3=代码教程");
+            $table->tinyInteger("use_type")->default(1)->comment("使用类型，1=日志，2=成长日志");
             $table->tinyInteger("type")->default(1)->comment("日记簿类型，1=公开，2=私密");
             $table->tinyInteger("status")->default(1)->comment("状态");
 

@@ -41,8 +41,6 @@ class Note extends BaseModel
     const ENUM_USE_TYPE_NOTE = 1;
     /** 大学成长日志 **/
     const ENUM_USE_TYPE_COLLEGE = 2;
-    /** 代码教程 **/
-    const ENUM_USE_TYPE_CODING = 3;
 
     /** 公开 **/
     const ENUM_TYPE_PRIVATE = 1;

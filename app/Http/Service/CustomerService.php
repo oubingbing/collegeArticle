@@ -29,10 +29,5 @@ class CustomerService
         if(!$light){
             throw new WebException("初始化失败");
         }
-
-        $code = $noteCategoryService->create($userId,"共享代码",NoteCategory::ENUM_USE_TYPE_CODING);
-        if(!$code){
-            throw new WebException("初始化失败");
-        }
     }
 }
