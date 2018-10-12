@@ -11,6 +11,8 @@ namespace App\Http\Service;
 
 use App\Exceptions\WebException;
 use App\Models\Customer as Model;
+use App\Models\SendMessage;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Crypt;
 
 class AuthService
@@ -111,6 +113,12 @@ class AuthService
         return true;
     }
 
+    /**
+     * 判断用户是否登录
+     *
+     * @author yezi
+     * @return bool
+     */
     public function auth()
     {
         if(session()->has("customer_id")){
@@ -120,13 +128,46 @@ class AuthService
         }
     }
 
+    /**
+     * 获取认证用户
+     *
+     * @author yezi
+     * @return \Illuminate\Session\SessionManager|\Illuminate\Session\Store|mixed
+     */
     public function authUser()
     {
         return session("customer_id");
     }
 
+    /**
+     * 退出登录
+     *
+     * @author yezi
+     */
     public function clearCustomer()
     {
         session()->forget('customer_id');
+    }
+
+    /**
+     * 校验验证码
+     *
+     * @author yezi
+     * @param $phone
+     * @param $code
+     * @return bool
+     */
+    public function validMessageCode($phone,$code)
+    {
+        $result = SendMessage::query()->where(SendMessage::FIELD_MOBILE,$phone)->orderBy(SendMessage::FIELD_CREATED_AT,"desc")->first();
+        if(!$result){
+            return false;
+        }
+
+        if(Carbon::now()->gt(Carbon::parse($result->{SendMessage::FIELD_EXPIRED_AT})) || $result->{SendMessage::FIELD_CODE} != $code){
+            return false;
+        }
+
+        return true;
     }
 }

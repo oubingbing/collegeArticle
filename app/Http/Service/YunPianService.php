@@ -46,10 +46,8 @@ class YunPianService
             $status = SendMessage::ENUM_STATUS_FAIL;
         }
 
-        $type = SendMessage::ENUM_TYPE_MESSAGE_CODE;
-        $sessionId = 0;
-        $expire = Carbon::now()->addSecond(90);
-        app(SendMessageService::class)->saveSendMessageLog($phone,$code,$status,$type,$sessionId,$expire);
+        $expire = Carbon::now()->addSecond(60*60);
+        app(SendMessageService::class)->saveSendMessageLog($phone,$code,$status,$expire);
 
         return $result;
     }
