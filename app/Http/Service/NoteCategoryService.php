@@ -29,7 +29,7 @@ class NoteCategoryService
     public function create($userId,$name,$type)
     {
         $result = Model::create([
-            Model::FIELD_ID_WEB_USER=>$userId,
+            Model::FIELD_ID_POSTER=>$userId,
             Model::FIELD_NAME=>$name,
             Model::FIELD_USE_TYPE=>$type
         ]);
@@ -65,7 +65,7 @@ class NoteCategoryService
      */
     public function findByUserAndName($userId,$name)
     {
-        $result = Model::query()->where(Model::FIELD_ID_WEB_USER,$userId)->where(Model::FIELD_NAME,$name)->first();
+        $result = Model::query()->where(Model::FIELD_ID_POSTER,$userId)->where(Model::FIELD_NAME,$name)->first();
         return $result;
     }
 
@@ -88,7 +88,7 @@ class NoteCategoryService
                     Note::FIELD_USE_TYPE
                 ]);
             }])
-            ->where(Model::FIELD_ID_WEB_USER,$userId)
+            ->where(Model::FIELD_ID_POSTER,$userId)
             ->select([
                 Model::FIELD_ID,
                 Model::FIELD_NAME,
@@ -111,7 +111,7 @@ class NoteCategoryService
      */
     public function getCategoryById($userId,$categoryId)
     {
-        $result = Model::query()->where(Model::FIELD_ID_WEB_USER,$userId)->where(Model::FIELD_ID,$categoryId)->first();
+        $result = Model::query()->where(Model::FIELD_ID_POSTER,$userId)->where(Model::FIELD_ID,$categoryId)->first();
         return $result;
     }
 

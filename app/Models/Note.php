@@ -19,6 +19,9 @@ class Note extends BaseModel
     /** 笔记所属的笔记分类 **/
     const FIELD_ID_CATEGORY = 'category_id';
 
+    /** 所属用户ID **/
+    const FIELD_ID_POSTER = 'poster_id';
+
     /** 笔记标题 */
     const FIELD_TITLE = 'title';
 
@@ -47,6 +50,9 @@ class Note extends BaseModel
     /** 私密 */
     const ENUM_TYPE_PUBLIC = 2;
 
+    const REL_POSTER = 'poster';
+    const REL_CATEGORY = 'category';
+
     protected $casts = [
         self::FIELD_ATTACHMENTS => 'array',
     ];
@@ -54,6 +60,7 @@ class Note extends BaseModel
     protected $fillable = [
         self::FIELD_ID,
         self::FIELD_ID_CATEGORY,
+        self::FIELD_ID_POSTER,
         self::FIELD_TITLE,
         self::FIELD_CONTENT,
         self::FIELD_ATTACHMENTS,
@@ -61,5 +68,19 @@ class Note extends BaseModel
         self::FIELD_TYPE,
         self::FIELD_STATUS
     ];
+
+    public function poster()
+    {
+        return $this->belongsTo(Customer::class,self::FIELD_ID_POSTER,Customer::FIELD_ID)->select([
+            Customer::FIELD_ID,
+            Customer::FIELD_NICKNAME,
+            Customer::FIELD_AVATAR
+        ]);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(NoteCategory::class)->select([NoteCategory::FIELD_ID,NoteCategory::FIELD_NAME]);
+    }
 
 }

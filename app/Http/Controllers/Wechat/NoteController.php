@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Service\CollegeArticleService;
 use App\Http\Service\NoteService;
 use App\Models\CollegeArticle;
+use App\Models\Customer;
 use App\Models\Note;
 
 class NoteController extends Controller
@@ -47,6 +48,7 @@ class NoteController extends Controller
             Note::FIELD_ATTACHMENTS,
             Note::FIELD_USE_TYPE,
             Note::FIELD_ID_CATEGORY,
+            Note::FIELD_ID_POSTER,
             Note::FIELD_CREATED_AT
         ];
         $query = $this->noteService->getBuilder()->filter($type)->sort($orderBy,$sortBy)->done();
@@ -67,8 +69,16 @@ class NoteController extends Controller
     public function detail($id)
     {
         $result = $this->noteService->getNoteById($id);
+        $result->{Note::REL_POSTER};
+        $result->{Note::REL_CATEGORY};
 
-        return $result;
+        return $this->noteService->formatSingle($result);
+    }
+
+    public function myCategoryList()
+    {
+        $user = request()->input("user");
+        dd($user);
     }
 
     /**

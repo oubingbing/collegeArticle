@@ -10,7 +10,10 @@ namespace App\Http\Service;
 
 
 use App\Exceptions\WebException;
+use App\Models\Customer;
 use App\Models\Note as Model;
+use App\Models\Note;
+use Carbon\Carbon;
 
 class NoteService
 {
@@ -28,10 +31,11 @@ class NoteService
      * @param $type
      * @return mixed
      */
-    public function create($categoryId,$title,$content,$attachments,$useType,$type)
+    public function create($categoryId,$userId,$title,$content,$attachments,$useType,$type)
     {
         $result = Model::create([
             Model::FIELD_ID_CATEGORY=>$categoryId,
+            Model::FIELD_ID_POSTER=>$userId,
             Model::FIELD_TITLE=>$title,
             Model::FIELD_CONTENT=>$content,
             Model::FIELD_ATTACHMENTS=>empty($attachments)?[]:$attachments,
@@ -55,6 +59,11 @@ class NoteService
             $item->{Model::FIELD_CONTENT} = '';
         }
 
+        //dd($item->{Note::FIELD_CREATED_AT});
+
+        //Carbon::setLocale('zh');
+       // $item->{Note::FIELD_CREATED_AT} = Carbon::parse($item->{Note::FIELD_CREATED_AT})->diffForHumans();
+
         return $item;
     }
 
@@ -65,7 +74,7 @@ class NoteService
      * @param $id
      * @return \Illuminate\Database\Eloquent\Model|null|object|static
      */
-    public function getNoteById($id)
+    public function getNoteById($id,$filed = [])
     {
         $result = Model::query()->where(Model::FIELD_ID,$id)->first();
         return $result;
@@ -151,7 +160,7 @@ class NoteService
      */
     public function getBuilder()
     {
-        $this->builder = Model::query();
+        $this->builder = Model::query()->with([Model::REL_POSTER]);
 
         return $this;
     }

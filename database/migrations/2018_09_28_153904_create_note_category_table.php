@@ -15,7 +15,7 @@ class CreateNoteCategoryTable extends Migration
     {
         Schema::create('note_categories', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger("web_user_id")->index()->comment("所属用户ID,网站后台用户");
+            $table->bigInteger("poster_id")->index()->comment("所属用户ID,网站后台用户");
             $table->string("name",128)->default("")->comment("日记簿名字");
 
             $table->tinyInteger("use_type")->default(1)->comment("使用类型，1=日志，2=成长日志");

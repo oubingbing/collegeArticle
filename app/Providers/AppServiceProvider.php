@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Exception;
@@ -16,6 +17,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+        Carbon::setLocale('zh');
         //注册dingo api异常，出现异常，将接管异常输出
         app('api.exception')->register(function (\Exception $exception) {
             $request = \Illuminate\Http\Request::capture();

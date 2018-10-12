@@ -16,6 +16,7 @@ class CreateNotesTable extends Migration
         Schema::create('notes', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->bigInteger("category_id")->index()->comment("所属笔记本");
+            $table->bigInteger("poster_id")->index()->comment("所属用户ID,网站后台用户");
 
             $table->string("title",128)->default("")->comment("笔记的标题");
             $table->longText("content")->comment("笔记内容");

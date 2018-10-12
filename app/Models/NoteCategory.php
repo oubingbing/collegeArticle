@@ -18,7 +18,7 @@ class NoteCategory extends BaseModel
     const FIELD_ID = 'id';
 
     /** 所属用户ID **/
-    const FIELD_ID_WEB_USER = 'web_user_id';
+    const FIELD_ID_POSTER = 'poster_id';
 
     /** 笔记簿名字 **/
     const FIELD_NAME = 'name';
@@ -46,7 +46,7 @@ class NoteCategory extends BaseModel
 
     protected $fillable = [
         self::FIELD_ID,
-        self::FIELD_ID_WEB_USER,
+        self::FIELD_ID_POSTER,
         self::FIELD_NAME,
         self::FIELD_TYPE,
         self::FIELD_USE_TYPE,
