@@ -31,8 +31,8 @@ class NoteCategoryController extends Controller
      * 新建笔记类别
      *
      * @author yezi
-     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
-     * @throws ApiException
+     * @return mixed
+     * @throws WebException
      */
     public function create()
     {

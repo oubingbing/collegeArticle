@@ -9,9 +9,8 @@
 namespace App\Http\Service;
 
 
+use App\Exceptions\ApiException;
 use App\Models\User;
-use App\Models\UserProfile;
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
 
 class UserService
 {
@@ -21,10 +20,7 @@ class UserService
      * 新增用户
      *
      * @author yezi
-     *
-     * @param $openId
-     * @param $data
-     *
+     * @param $userInfo
      * @return mixed
      */
     public function createWeChatUser($userInfo)
@@ -104,75 +100,6 @@ class UserService
     }
 
     /**
-     * 获取个人资料
-     *
-     * @author yezi
-     *
-     * @param $userId
-     * @return \Illuminate\Database\Eloquent\Model
-     */
-    public function getProfileById($userId)
-    {
-        $profile = UserProfile::query()->where(UserProfile::FIELD_ID_USER,$userId)->first();
-
-        return $profile;
-    }
-
-    /**
-     * 跟新手机号码
-     *
-     * @author yezi
-     *
-     * @param $userId
-     * @param $mobile
-     * @return int
-     */
-    public function updateMobile($userId,$mobile)
-    {
-        $result = User::query()->where(User::FIELD_ID,$userId)->update([User::FIELD_MOBILE=>$mobile]);
-
-        return $result;
-    }
-
-    /**
-     * 保存个人资料
-     *
-     * @author yezi
-     *
-     * @param $name
-     * @param $grade
-     * @param $number
-     * @param $major
-     * @param $college
-     * @return mixed
-     */
-    public function saveProfile($user,$name,$grade,$number,$major,$college)
-    {
-        $profile = $this->getProfileById($user->id);
-        if($profile){
-            $profile->{UserProfile::FIELD_NAME} = $name;
-            $profile->{UserProfile::FIELD_GRADE} = $grade;
-            $profile->{UserProfile::FIELD_STUDENT_NUMBER} = $number;
-            $profile->{UserProfile::FIELD_COLLEGE} = $college;
-            $profile->{UserProfile::FIELD_MAJOR} = $major;
-            $profile->save();
-        }else{
-            $profile = UserProfile::create([
-                UserProfile::FIELD_ID_USER=>$user->id,
-                UserProfile::FIELD_NAME=>$name,
-                UserProfile::FIELD_GRADE=>$grade,
-                UserProfile::FIELD_STUDENT_NUMBER=>$number,
-                UserProfile::FIELD_COLLEGE=>$college,
-                UserProfile::FIELD_MAJOR=>$major,
-                UserProfile::FIELD_NICKNAME=>$user->{User::FIELD_NICKNAME},
-                UserProfile::FIELD_AVATAR=>$user->{User::FIELD_AVATAR}
-            ]);
-        }
-
-        return $profile;
-    }
-
-    /**
      * 验证参数
      *
      * @author yezi
@@ -213,7 +140,26 @@ class UserService
 
     public function getPhoneById($id)
     {
-        return User::query()->where(User::FIELD_ID,$id)->value(User::FIELD_MOBILE);
+        return User::query()->where(User::FIELD_ID,$id)->first();
     }
 
+    public function bindUser($userId,$phone)
+    {
+        $user = $this->getPhoneById($userId);
+        if(!$user){
+            throw new ApiException("用户不存在");
+        }
+
+        if($user->{User::FIELD_PHONE}){
+            throw new ApiException("用户已绑定");
+        }
+
+        $user->{User::FIELD_PHONE} = $phone;
+        $result = $user->save();
+        if(!$result){
+            throw new ApiException("更新数据失败");
+        }
+
+        return $result;
+    }
 }

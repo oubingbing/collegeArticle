@@ -27,7 +27,7 @@ class User extends Authenticatable implements JWTSubject
     const FIELD_PASSWORD = 'password';
 
     /** field mobile 手机 */
-    const FIELD_MOBILE = 'mobile';
+    const FIELD_PHONE = 'phone';
 
     /** field open_id */
     const FIELD_ID_OPENID = 'open_id';
@@ -96,7 +96,7 @@ class User extends Authenticatable implements JWTSubject
         self::FIELD_ID_APP,
         self::FIELD_EMAIL,
         self::FIELD_PASSWORD,
-        self::FIELD_MOBILE,
+        self::FIELD_PHONE,
         self::FIELD_ID_OPENID,
         self::FIELD_ID_UNION,
         self::FIELD_AVATAR,

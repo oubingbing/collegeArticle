@@ -42,6 +42,10 @@ $api->version('v1', function ($api) {
 
             /** 获取文章详情 **/
             $api->get("/note/{id}",NoteController::class . "@detail");
+
+            $api->post("/send_message",UserController::class . "@sendMessage");
+
+            $api->post("/bind_user",UserController::class . "@bindUser");
         });
 
     });

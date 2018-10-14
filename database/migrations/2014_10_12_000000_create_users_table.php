@@ -18,6 +18,7 @@ class CreateUsersTable extends Migration
 
             $table->string('nickname')->comment('用户微信昵称');
             $table->string('avatar')->default('')->comment('微信头像');
+            $table->string('phone',18)->default('')->comment('手机号码');
             $table->tinyInteger('gender')->default(0)->comment('默认一个性别');
             $table->string('open_id')->unique()->default('')->index();
             $table->string('union_id')->default('')->index();
