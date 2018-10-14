@@ -204,4 +204,18 @@ class NoteService
         return $this->builder;
     }
 
+    public function getNotesByCategoryId($categoryId)
+    {
+        $list = Model::query()
+            ->where(Model::FIELD_ID_CATEGORY,$categoryId)
+            ->select([
+                Model::FIELD_ID,
+                Model::FIELD_TITLE,
+                Model::FIELD_CREATED_AT
+            ])
+            ->get();
+
+        return $list;
+    }
+
 }

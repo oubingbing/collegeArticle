@@ -85,6 +85,13 @@ class UserController extends Controller
         return $result;
     }
 
+    /**
+     * 绑定账号
+     *
+     * @author yezi
+     * @return string
+     * @throws ApiException
+     */
     public function bindUser()
     {
         $user = request()->input('user');

@@ -191,4 +191,18 @@ class NoteCategoryService
         return $result;
     }
 
+    public function getMyCategories($posterId)
+    {
+        $result = Model::query()
+            ->where(Model::FIELD_ID_POSTER,$posterId)
+            ->select([
+                Model::FIELD_ID,
+                Model::FIELD_ID_POSTER,
+                Model::FIELD_NAME
+            ])
+            ->get();
+
+        return $result;
+    }
+
 }

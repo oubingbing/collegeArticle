@@ -9,12 +9,11 @@
 namespace App\Http\Wechat;
 
 
+use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
-use App\Http\Service\CollegeArticleService;
 use App\Http\Service\NoteService;
-use App\Models\CollegeArticle;
-use App\Models\Customer;
 use App\Models\Note;
+use App\Models\User;
 
 class NoteController extends Controller
 {
@@ -75,42 +74,16 @@ class NoteController extends Controller
         return $this->noteService->formatSingle($result);
     }
 
-    public function myCategoryList()
+    public function getNoteListByCategory($categoryId)
     {
         $user = request()->input("user");
-        dd($user);
-    }
 
-    /**
-     * 笔记列表
-     *
-     * @author yezi
-     * @return array
-     */
-    public function noteCategoryList()
-    {
-        $orderBy = request()->input('order_by', 'created_at');
-        $sortBy = request()->input('sort_by', 'desc');
-        $filter = request()->input('filter');
-        $pageSize = request()->input('page_size', 10);
-        $pageNumber = request()->input('page_number', 1);
+        if(empty($categoryId)){
+            throw new ApiException("id不能为空");
+        }
 
-        $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
+        $list = $this->noteService->getNotesByCategoryId($categoryId);
 
-        /*$selectData = [
-            CollegeArticle::FIELD_ID,
-            CollegeArticle::FIELD_ID_POSTER,
-            CollegeArticle::FIELD_COVER_IMAGE,
-            CollegeArticle::FIELD_TITLE,
-            CollegeArticle::FIELD_CREATED_AT,
-            CollegeArticle::FIELD_CONTENT
-        ];
-        $query = $this->collegeService->getBuilder()->filter($type)->sort($orderBy,$sortBy)->done();
-        $result = paginate($query,$pageParams,$selectData,function ($item){
-            $item = $this->collegeService->formatSingle($item);
-            return $item;
-        });
-
-        return $result;*/
+        return $list;
     }
 }

@@ -14,6 +14,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Wechat\CollegeArticleController;
 use App\Http\Wechat\LocationController;
+use App\Http\Wechat\NoteCategoryController;
 use App\Http\Wechat\NoteController;
 use App\Http\Wechat\TravelController;
 use App\Http\Wechat\UserController;
@@ -43,9 +44,15 @@ $api->version('v1', function ($api) {
             /** 获取文章详情 **/
             $api->get("/note/{id}",NoteController::class . "@detail");
 
+            /** 发送验证码 **/
             $api->post("/send_message",UserController::class . "@sendMessage");
 
+            /** 绑定账号 **/
             $api->post("/bind_user",UserController::class . "@bindUser");
+
+            $api->get("/my_categories",NoteCategoryController::class . "@myCategories");
+
+            $api->get("/category_notes/{id}",NoteController::class . "@getNoteListByCategory");
         });
 
     });

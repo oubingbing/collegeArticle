@@ -83,8 +83,8 @@ class User extends Authenticatable implements JWTSubject
     /** gender 未知 */
     const ENUM_GENDER_UN_KNOW = 0;
 
-    const REL_PROFILE = 'profile';
     const REL_APP = 'app';
+    const REL_CUSTOMER = 'customer';
 
     /**
      * The attributes that are mass assignable.
@@ -139,4 +139,8 @@ class User extends Authenticatable implements JWTSubject
         'password', 'remember_token',
     ];
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class,self::FIELD_PHONE,Customer::FIELD_PHONE);
+    }
 }
