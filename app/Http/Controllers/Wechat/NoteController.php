@@ -19,6 +19,7 @@ use App\Models\Note;
 use App\Models\OperateStatistics;
 use App\Models\PraiseNote;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class NoteController extends Controller
 {
@@ -68,6 +69,8 @@ class NoteController extends Controller
                 ]);
             }]);
         $result = paginate($query,$pageParams,$selectData,function ($item){
+            //Carbon::setLocale('zh');
+            //$item["created_at"] = Carbon::parse($item["created_at"])->diffForHumans();
             return $item;
         });
 

@@ -68,7 +68,7 @@ class ViewLogController extends Controller
             throw new ApiException($exception->getMessage());
         }
 
-        return $operateResult;
+        return (string)$operateResult;
     }
 
     public function viewLogs()
