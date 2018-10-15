@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Service\CommonService;
 use App\Http\Service\FollowService;
 use App\Http\Service\OperateStaticsService;
+use App\Http\Service\ViewLogService;
 use App\Models\Customer;
 use App\Models\Follow;
 use App\Models\Note;
@@ -151,6 +152,7 @@ class FollowController extends Controller
                 }
             ]);
         $list = paginate($builder,$pageParams,"*",function ($item){
+            $item->view_number = app(ViewLogService::class)->getViewNumber($item);
             return $item;
         });
         return $list;

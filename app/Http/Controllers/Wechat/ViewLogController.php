@@ -68,7 +68,7 @@ class ViewLogController extends Controller
             throw new ApiException($exception->getMessage());
         }
 
-        return $saveResult;
+        return $operateResult;
     }
 
     public function viewLogs()
@@ -83,6 +83,7 @@ class ViewLogController extends Controller
 
         $builder = $this->viewService->getBuilder($user->id,ViewLog::ENUM_TYPE_NOTE);
         $list = paginate($builder,$pageParams,"*",function ($item){
+            $item->view_number = $this->viewService->getViewNumber($item);
             return $item;
         });
         return $list;

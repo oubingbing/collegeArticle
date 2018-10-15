@@ -9,6 +9,7 @@
 namespace App\Http\Service;
 
 use App\Models\Note;
+use App\Models\OperateStatistics;
 use App\Models\ViewLog as Model;
 
 class ViewLogService
@@ -62,5 +63,18 @@ class ViewLogService
             ->where(Model::FIELD_TYPE,$type)
             ->orderBy(Model::FIELD_CREATED_AT,"desc");
         return $result;
+    }
+
+    public function getViewNumber($noteId)
+    {
+        $result = OperateStatistics::query()
+            ->where(OperateStatistics::FIELD_ID_OBJ,$noteId)
+            ->where(OperateStatistics::FIELD_TYPE,OperateStatistics::ENUM_TYPE_NOTE)
+            ->first();
+        if($result){
+            return $result->{OperateStatistics::FIELD_VIEW};
+        }else{
+            return 0;
+        }
     }
 }

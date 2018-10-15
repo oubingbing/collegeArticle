@@ -16,6 +16,7 @@ use App\Http\Service\NoteService;
 use App\Http\Service\PraiseService;
 use App\Models\Follow;
 use App\Models\Note;
+use App\Models\OperateStatistics;
 use App\Models\PraiseNote;
 use App\Models\User;
 
@@ -54,7 +55,18 @@ class NoteController extends Controller
             Note::FIELD_ID_POSTER,
             Note::FIELD_CREATED_AT
         ];
-        $query = $this->noteService->getBuilder()->filter($type)->sort($orderBy,$sortBy)->done();
+        $query = $this->noteService->getBuilder()
+            ->filter($type)
+            ->sort($orderBy,$sortBy)
+            ->done()
+            ->with([Note::REL_STATICS=>function($query){
+                $query->select([
+                    OperateStatistics::FIELD_ID,
+                    OperateStatistics::FIELD_VIEW,
+                    OperateStatistics::FIELD_ID_OBJ,
+                    OperateStatistics::FIELD_TYPE
+                ]);
+            }]);
         $result = paginate($query,$pageParams,$selectData,function ($item){
             return $item;
         });

@@ -52,6 +52,7 @@ class Note extends BaseModel
 
     const REL_POSTER = 'poster';
     const REL_CATEGORY = 'category';
+    const REL_STATICS = 'statics';
 
     protected $casts = [
         self::FIELD_ATTACHMENTS => 'array',
@@ -81,6 +82,12 @@ class Note extends BaseModel
     public function category()
     {
         return $this->belongsTo(NoteCategory::class)->select([NoteCategory::FIELD_ID,NoteCategory::FIELD_NAME]);
+    }
+
+    public function statics()
+    {
+        return $this->hasOne(OperateStatistics::class,OperateStatistics::FIELD_ID_OBJ,self::FIELD_ID)
+            ->where(OperateStatistics::FIELD_TYPE,OperateStatistics::ENUM_TYPE_NOTE);
     }
 
 }
