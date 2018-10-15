@@ -20,6 +20,7 @@ use App\Http\Wechat\NoteController;
 use App\Http\Wechat\PraiseController;
 use App\Http\Wechat\TravelController;
 use App\Http\Wechat\UserController;
+use App\Http\Wechat\ViewLogController;
 
 $api = app('Dingo\Api\Routing\Router');
 
@@ -69,6 +70,15 @@ $api->version('v1', function ($api) {
 
             /** 取消点赞 **/
             $api->post("/cancel_follow",FollowController::class . "@cancelFollow");
+
+            /** 保存浏览记录 **/
+            $api->post("/view_log",ViewLogController::class . "@view");
+
+            $api->get("/view_log",ViewLogController::class . '@viewLogs');
+
+            $api->get("/collect_note",FollowController::class . "@followNotes");
+
+            $api->get("/follow_users",FollowController::class . "@followUser");
         });
 
     });

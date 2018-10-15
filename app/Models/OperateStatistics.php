@@ -32,6 +32,9 @@ class OperateStatistics extends BaseModel
     /** Field praise **/
     const FIELD_PRAISE = 'praise';
 
+    /** Field view **/
+    const FIELD_VIEW = 'view';
+
     const ENUM_TYPE_AUTHOR = 1;
     const ENUM_TYPE_CATEGORY = 2;
     const ENUM_TYPE_NOTE = 3;
@@ -42,6 +45,7 @@ class OperateStatistics extends BaseModel
         self::FIELD_TYPE,
         self::FIELD_FOLLOW,
         self::FIELD_COLLECT,
-        self::FIELD_PRAISE
+        self::FIELD_PRAISE,
+        self::FIELD_VIEW
     ];
 }

@@ -3,21 +3,21 @@
  * Created by PhpStorm.
  * User: Administrator
  * Date: 2018/10/15 0015
- * Time: 9:34
+ * Time: 13:36
  */
 
 namespace App\Models;
 
 
-class Follow extends BaseModel
+class ViewLog extends BaseModel
 {
-    const TABLE_NAME = 'follows';
+    const TABLE_NAME = 'view_logs';
     protected $table = self::TABLE_NAME;
 
     /** Field id **/
     const FIELD_ID = 'id';
 
-    /** Field obj_id 关注对象 **/
+    /** Field obj_id 点赞对象 **/
     const FIELD_ID_OBJ = 'obj_id';
 
     /** Field user_id **/
@@ -31,7 +31,6 @@ class Follow extends BaseModel
     const ENUM_TYPE_NOTE = 3;
 
     const REL_NOTE = 'note';
-    const REL_CUSTOMER = 'customer';
 
     protected $fillable = [
         self::FIELD_ID,
@@ -43,11 +42,6 @@ class Follow extends BaseModel
     public function note()
     {
         return $this->belongsTo(Note::class,self::FIELD_ID_OBJ,Note::FIELD_ID);
-    }
-
-    public function customer()
-    {
-        return $this->belongsTo(Customer::class,self::FIELD_ID_OBJ,Customer::FIELD_ID);
     }
 
 }

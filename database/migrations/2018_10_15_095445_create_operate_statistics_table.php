@@ -21,6 +21,7 @@ class CreateOperateStatisticsTable extends Migration
             $table->integer("follow")->default(0)->comment("关注计数");
             $table->integer("collect")->default(0)->comment("收藏计数");
             $table->integer("praise")->default(0)->comment("点赞计数");
+            $table->integer("view")->default(0)->comment("浏览次数");
 
             $table->timestamp('created_at')->nullable()->index();
             $table->timestamp('updated_at')->nullable();

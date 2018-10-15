@@ -13,12 +13,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Service\CommonService;
 use App\Http\Service\FollowService;
 use App\Http\Service\OperateStaticsService;
+use App\Models\Customer;
 use App\Models\Follow;
+use App\Models\Note;
 use App\Models\OperateStatistics;
+use Illuminate\Database\Eloquent\Model;
 
 class FollowController extends Controller
 {
-
     private $followService;
     private $operateService;
 
@@ -29,7 +31,7 @@ class FollowController extends Controller
     }
 
     /**
-     * 点赞
+     * 收藏
      *
      * @author yezi
      * @return mixed
@@ -104,7 +106,7 @@ class FollowController extends Controller
                 throw new ApiException("保存数据失败");
             }
 
-            $operateResult = $this->operateService->subCount($objId,Follow::ENUM_TYPE_NOTE,OperateStatistics::FIELD_PRAISE,1);
+            $operateResult = $this->operateService->subCount($objId,Follow::ENUM_TYPE_NOTE,OperateStatistics::FIELD_FOLLOW,1);
             if(!$operateResult){
                 throw new ApiException("保存数据失败");
             }
@@ -117,5 +119,77 @@ class FollowController extends Controller
 
         return $saveResult;
     }
+
+    /**
+     * 我关注的日志列表
+     *
+     * @author yezi
+     * @return array
+     */
+    public function followNotes()
+    {
+        $user = request()->input("user");
+        $sortBy = request()->input('sort_by', 'desc');
+        $filter = request()->input('filter');
+        $pageSize = request()->input('page_size', 10);
+        $pageNumber = request()->input('page_number', 1);
+
+        $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
+        $builder = $this->followService->builderQuery()
+            ->filter($user->id,Follow::ENUM_TYPE_NOTE)
+            ->sort(Follow::FIELD_CREATED_AT,$sortBy)
+            ->done()
+            ->with([
+                Follow::REL_NOTE=>function($query){
+                    $query->select([
+                        Note::FIELD_ID,
+                        Note::FIELD_TITLE,
+                        Note::FIELD_ID_POSTER,
+                        Note::FIELD_ID_CATEGORY,
+                        Note::FIELD_ATTACHMENTS
+                    ]);
+                }
+            ]);
+        $list = paginate($builder,$pageParams,"*",function ($item){
+            return $item;
+        });
+        return $list;
+    }
+
+    /**
+     * 我关注的日志列表
+     *
+     * @author yezi
+     * @return array
+     */
+    public function followUser()
+    {
+        $user = request()->input("user");
+        $sortBy = request()->input('sort_by', 'desc');
+        $filter = request()->input('filter');
+        $pageSize = request()->input('page_size', 10);
+        $pageNumber = request()->input('page_number', 1);
+
+        $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
+        $builder = $this->followService->builderQuery()
+            ->filter($user->id,Follow::ENUM_TYPE_AUTHOR)
+            ->sort(Follow::FIELD_CREATED_AT,$sortBy)
+            ->done()
+            ->with([
+                Follow::REL_CUSTOMER=>function($query){
+                    $query->select([
+                        Customer::FIELD_ID,
+                        Customer::FIELD_NICKNAME,
+                        Customer::FIELD_AVATAR
+                    ]);
+                }
+            ]);
+        $list = paginate($builder,$pageParams,"*",function ($item){
+            $item = $this->followService->countUserFollow($item);
+            return $item;
+        });
+        return $list;
+    }
+
 
 }

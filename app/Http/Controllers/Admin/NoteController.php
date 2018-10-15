@@ -147,7 +147,7 @@ class NoteController extends Controller
 
         if($category->{NoteCategory::FIELD_USE_TYPE} != NoteCategory::ENUM_USE_TYPE_NOTE){
             if(empty($attachments)){
-                throw new WebException("封面图片不能为空");
+                throw new WebException("灯塔文章需要至少上传一张图片");
             }
         }
 
