@@ -49,4 +49,9 @@ class CustomerService
         $result = $customer->save();
         return $result;
     }
+
+    public function getCustomerById($id)
+    {
+        return Model::find($id);
+    }
 }

@@ -11,8 +11,12 @@ namespace App\Http\Wechat;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Http\Service\FollowService;
 use App\Http\Service\NoteService;
+use App\Http\Service\PraiseService;
+use App\Models\Follow;
 use App\Models\Note;
+use App\Models\PraiseNote;
 use App\Models\User;
 
 class NoteController extends Controller
@@ -67,9 +71,20 @@ class NoteController extends Controller
      */
     public function detail($id)
     {
-        $result = $this->noteService->getNoteById($id);
+        $user = request()->input("user");
+
+        $result = $this->noteService->getNoteById($id,[
+                Note::FIELD_ID,Note::FIELD_ID_POSTER,Note::FIELD_ID_CATEGORY,Note::FIELD_TITLE,Note::FIELD_CONTENT,Note::FIELD_CREATED_AT
+            ]);
         $result->{Note::REL_POSTER};
         $result->{Note::REL_CATEGORY};
+
+        //是否点赞文章
+        $result->praise = app(PraiseService::class)->checkPraise($user->id,$result->id,PraiseNote::ENUM_TYPE_NOTE);
+
+        $followService = app(FollowService::class);
+        $result->follow_author = $followService->checkFollow($user->id,$result->{Note::FIELD_ID_POSTER},Follow::ENUM_TYPE_AUTHOR);
+        $result->follow_note = $followService->checkFollow($user->id,$result->id,Follow::ENUM_TYPE_NOTE);
 
         return $this->noteService->formatSingle($result);
     }

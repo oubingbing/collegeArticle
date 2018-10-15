@@ -13,9 +13,11 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Wechat\CollegeArticleController;
+use App\Http\Wechat\FollowController;
 use App\Http\Wechat\LocationController;
 use App\Http\Wechat\NoteCategoryController;
 use App\Http\Wechat\NoteController;
+use App\Http\Wechat\PraiseController;
 use App\Http\Wechat\TravelController;
 use App\Http\Wechat\UserController;
 
@@ -50,9 +52,23 @@ $api->version('v1', function ($api) {
             /** 绑定账号 **/
             $api->post("/bind_user",UserController::class . "@bindUser");
 
+            /** 获得我的笔记分类 **/
             $api->get("/my_categories",NoteCategoryController::class . "@myCategories");
 
+            /** 获取笔记分类的笔记 **/
             $api->get("/category_notes/{id}",NoteController::class . "@getNoteListByCategory");
+
+            /** 点赞 **/
+            $api->post("/praise",PraiseController::class . "@praiseNote");
+
+            /** 取消点赞 **/
+            $api->post("/cancel_praise",PraiseController::class . "@cancelPraise");
+
+            /** 点赞 **/
+            $api->post("/follow",FollowController::class . "@follow");
+
+            /** 取消点赞 **/
+            $api->post("/cancel_follow",FollowController::class . "@cancelFollow");
         });
 
     });

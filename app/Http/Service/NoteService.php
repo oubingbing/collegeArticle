@@ -76,7 +76,13 @@ class NoteService
      */
     public function getNoteById($id,$filed = [])
     {
-        $result = Model::query()->where(Model::FIELD_ID,$id)->first();
+        $query = Model::query()->where(Model::FIELD_ID,$id);
+        if(count($filed) > 0){
+            $query->select($filed);
+        }
+
+        $result = $query->first();
+
         return $result;
     }
 
