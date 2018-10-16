@@ -89,7 +89,7 @@ class NoteController extends Controller
         $user = request()->input("user");
 
         $result = $this->noteService->getNoteById($id,[
-                Note::FIELD_ID,Note::FIELD_ID_POSTER,Note::FIELD_ID_CATEGORY,Note::FIELD_TITLE,Note::FIELD_CONTENT,Note::FIELD_CREATED_AT
+                Note::FIELD_ID,Note::FIELD_ID_POSTER,Note::FIELD_ID_CATEGORY,Note::FIELD_TITLE,Note::FIELD_ATTACHMENTS,Note::FIELD_CONTENT,Note::FIELD_CREATED_AT
             ]);
         $result->{Note::REL_POSTER};
         $result->{Note::REL_CATEGORY};
