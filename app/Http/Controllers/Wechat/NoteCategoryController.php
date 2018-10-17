@@ -70,6 +70,8 @@ class NoteCategoryController extends Controller
         $category->follow_category = app(FollowService::class)->checkFollow($user->id,$category->id,Follow::ENUM_TYPE_CATEGORY);
         $category->follow_author = app(FollowService::class)->checkFollow($user->id,$category->{NoteCategory::FIELD_ID_POSTER},Follow::ENUM_TYPE_AUTHOR);
 
+        $category->{NoteCategory::REL_CUSTOMER};
+
         $category->notes = collect($this->noteService->getNotesByCategoryId($categoryId))->map(function ($item){
             $static = $item->{Note::REL_STATICS};
             if($static){

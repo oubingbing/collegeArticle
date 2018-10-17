@@ -43,6 +43,7 @@ class NoteCategory extends BaseModel
     const ENUM_TYPE_PUBLIC = 2;
 
     const REL_NOTE = 'notes';
+    const REL_CUSTOMER = 'customer';
 
     protected $fillable = [
         self::FIELD_ID,
@@ -56,5 +57,10 @@ class NoteCategory extends BaseModel
     public function notes()
     {
         return $this->hasMany(Note::class,Note::FIELD_ID_CATEGORY,self::FIELD_ID);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class,self::FIELD_ID_POSTER,Customer::FIELD_ID)->select([Customer::FIELD_ID,Customer::FIELD_NICKNAME,Customer::FIELD_AVATAR]);
     }
 }
