@@ -216,7 +216,11 @@ class FollowController extends Controller
                     ]);
                 }
             ]);
-        $list = paginate($builder,$pageParams,"*",function ($item){
+        $list = paginate($builder,$pageParams,[
+            Follow::FIELD_ID,
+            Follow::FIELD_ID_USER,
+            Follow::FIELD_ID_OBJ
+        ],function ($item){
             $item = $this->followService->countUserFollow($item);
             return $item;
         });
