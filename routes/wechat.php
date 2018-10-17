@@ -74,13 +74,21 @@ $api->version('v1', function ($api) {
             /** 保存浏览记录 **/
             $api->post("/view_log",ViewLogController::class . "@view");
 
+            /** 获取浏览记录 **/
             $api->get("/view_log",ViewLogController::class . '@viewLogs');
 
+            /** 获取收藏记录 **/
             $api->get("/collect_note",FollowController::class . "@followNotes");
 
+            /** 获取关注的用户 **/
             $api->get("/follow_users",FollowController::class . "@followUser");
 
+            /** 获取笔记簿的笔记列表 **/
             $api->get("/category/{id}",NoteCategoryController::class . "@cateGoryDetail");
+
+            $api->get("/category",NoteCategoryController::class ."@categoryList");
+
+            $api->get("/follow_categories",FollowController::class . "@followCategory");
         });
 
     });

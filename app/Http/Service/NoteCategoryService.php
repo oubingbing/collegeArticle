@@ -17,6 +17,8 @@ use PhpParser\Node\Expr\AssignOp\Mod;
 
 class NoteCategoryService
 {
+    private $builder;
+
     /**
      * 保存日记簿
      *
@@ -203,6 +205,23 @@ class NoteCategoryService
             ->get();
 
         return $result;
+    }
+
+    public function getBuilder()
+    {
+        $this->builder = Model::query();
+        return $this;
+    }
+
+    public function sort($orderBy,$sortBy)
+    {
+        $this->builder->orderBy($orderBy,$sortBy);
+        return $this;
+    }
+
+    public function done()
+    {
+        return $this->builder;
     }
 
 }

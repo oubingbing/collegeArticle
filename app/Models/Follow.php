@@ -32,6 +32,7 @@ class Follow extends BaseModel
 
     const REL_NOTE = 'note';
     const REL_CUSTOMER = 'customer';
+    const REL_CATEGORIES = 'categories';
 
     protected $fillable = [
         self::FIELD_ID,
@@ -48,6 +49,11 @@ class Follow extends BaseModel
     public function customer()
     {
         return $this->belongsTo(Customer::class,self::FIELD_ID_OBJ,Customer::FIELD_ID);
+    }
+
+    public function categories()
+    {
+        return $this->belongsTo(NoteCategory::class,self::FIELD_ID_OBJ,NoteCategory::FIELD_ID);
     }
 
 }

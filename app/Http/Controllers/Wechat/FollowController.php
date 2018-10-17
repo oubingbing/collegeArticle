@@ -17,6 +17,7 @@ use App\Http\Service\ViewLogService;
 use App\Models\Customer;
 use App\Models\Follow;
 use App\Models\Note;
+use App\Models\NoteCategory;
 use App\Models\OperateStatistics;
 use Illuminate\Database\Eloquent\Model;
 
@@ -183,6 +184,35 @@ class FollowController extends Controller
                         Customer::FIELD_ID,
                         Customer::FIELD_NICKNAME,
                         Customer::FIELD_AVATAR
+                    ]);
+                }
+            ]);
+        $list = paginate($builder,$pageParams,"*",function ($item){
+            $item = $this->followService->countUserFollow($item);
+            return $item;
+        });
+        return $list;
+    }
+
+    public function followCategory()
+    {
+        $user = request()->input("user");
+        $sortBy = request()->input('sort_by', 'desc');
+        $filter = request()->input('filter');
+        $pageSize = request()->input('page_size', 10);
+        $pageNumber = request()->input('page_number', 1);
+
+        $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
+        $builder = $this->followService->builderQuery()
+            ->filter($user->id,Follow::ENUM_TYPE_CATEGORY)
+            ->sort(Follow::FIELD_CREATED_AT,$sortBy)
+            ->done()
+            ->with([
+                Follow::REL_CATEGORIES=>function($query){
+                    $query->select([
+                        NoteCategory::FIELD_ID,
+                        NoteCategory::FIELD_ID_POSTER,
+                        NoteCategory::FIELD_NAME
                     ]);
                 }
             ]);

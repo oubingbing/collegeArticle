@@ -50,6 +50,14 @@ class NoteCategoryController extends Controller
         return $list;
     }
 
+    /**
+     * 获取笔记簿下的笔记列表
+     *
+     * @author yezi
+     * @param $categoryId
+     * @return \Illuminate\Database\Eloquent\Model|null|object|static
+     * @throws ApiException
+     */
     public function cateGoryDetail($categoryId)
     {
         $user = request()->input("user");
@@ -74,6 +82,30 @@ class NoteCategoryController extends Controller
         });
 
         return $category;
+    }
+
+    public function categoryList()
+    {
+        $orderBy = request()->input('order_by', 'created_at');
+        $sortBy = request()->input('sort_by', 'desc');
+        $pageSize = request()->input('page_size', 10);
+        $pageNumber = request()->input('page_number', 1);
+
+        $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
+
+        $query = $this->categoryService->getBuilder()
+            ->sort($orderBy,$sortBy)
+            ->done();
+        $selectData = [
+            NoteCategory::FIELD_ID,
+            NoteCategory::FIELD_NAME,
+            NoteCategory::FIELD_ID_POSTER
+        ];
+        $result = paginate($query,$pageParams,$selectData,function ($item){
+            return $item;
+        });
+
+        return $result;
     }
 
 }
