@@ -12,6 +12,7 @@ use App\Http\Service\UserService;
 use App\Http\Service\YunPianService;
 use App\Jobs\UserLogs;
 use App\Models\Colleges;
+use App\Models\Customer;
 use App\Models\User;
 use App\Models\WechatApp;
 use Carbon\Carbon;
@@ -135,6 +136,34 @@ class UserController extends Controller
             throw new ApiException($exception->getMessage());
         }
 
-        return "bind success";
+        $customer = $this->customerService->getCustomerByPhone($phone);
+
+        if(!collect($customer)->isEmpty()){
+            return [
+                'id'=>$customer->id,
+                'avatar'=>$customer->{Customer::FIELD_AVATAR},
+                "nickname"=>$customer->{Customer::FIELD_NICKNAME},
+                "phone"=>$customer->{Customer::FIELD_PHONE}
+            ];
+        }else{
+            return $customer;
+        }
+    }
+
+    public function bindUserInfo()
+    {
+        $user = request()->input('user');
+        $customer = $user->{User::REL_CUSTOMER};
+
+        if(!collect($customer)->isEmpty()){
+            return [
+                'id'=>$customer->id,
+                'avatar'=>$customer->{Customer::FIELD_AVATAR},
+                "nickname"=>$customer->{Customer::FIELD_NICKNAME},
+                "phone"=>$customer->{Customer::FIELD_PHONE}
+            ];
+        }else{
+            return $customer;
+        }
     }
 }
