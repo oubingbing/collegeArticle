@@ -23,4 +23,8 @@ Route::group(['namespace' => 'Auth'], function () {
     Route::get("/logout","LoginController@logout");
 
     Route::post("/send_message","RegisterController@sendMessage");
+
+    Route::get("/contact",function (){
+        return view("frontend.contact");
+    });
 });

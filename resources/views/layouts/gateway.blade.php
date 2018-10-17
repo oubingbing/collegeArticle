@@ -22,21 +22,24 @@
 <body>
 <div id="app">
 
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse" style="background: #009688;">
         <div class="container">
             <div class="navbar-header">
-                <a class="navbar-brand" href="/">灯塔笔记</a>
+                <a class="navbar-brand" href="/" style="color: white">灯塔笔记</a>
             </div>
 
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{{ asset('/') }}">首页</a></li>
-                    <li><a href="{{ asset('/admin') }}">控制台</a></li>
-                        <li><a href="{{ asset('login') }}">登录</a></li>
-                        <li><a href="{{ asset('register') }}">注册</a></li>
-                    <li><a href="{{ asset('contact') }}">联系</a></li>
-                    <li><a href="{{ asset('about') }}">公众号</a></li>
-
+                    <li><a href="{{ asset('/') }}" style="color: white">首页</a></li>
+                    @if (session("customer_id"))
+                        <li><a href="{{ asset('/admin') }}" style="color: white">{{session('customer_name')}}</a></li>
+                        <li><a href="{{ asset('/admin') }}" style="color: white">控制台</a></li>
+                        <li><a href="{{ asset('/logout') }}" style="color: white">退出</a></li>
+                    @else
+                        <li><a href="{{ asset('login') }}" style="color: white">登录</a></li>
+                        <li><a href="{{ asset('register') }}" style="color: white">注册</a></li>
+                    @endif
+                    <li><a href="{{ asset('contact') }}" style="color: white">联系</a></li>
                 </ul>
             </div>
         </div>

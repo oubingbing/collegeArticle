@@ -107,7 +107,7 @@ class AuthService
         if($this->encrypt($password,$customer->{Model::FIELD_SALT}) != $customer->{Model::FIELD_PASSWORD}){
             return false;
         }else{
-            session(['customer_id' => $customer->id]);
+            session(['customer_id' => $customer->id,'customer_name'=>$customer->{Model::FIELD_NICKNAME}]);
         }
 
         return true;
