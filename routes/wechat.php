@@ -79,6 +79,8 @@ $api->version('v1', function ($api) {
             $api->get("/collect_note",FollowController::class . "@followNotes");
 
             $api->get("/follow_users",FollowController::class . "@followUser");
+
+            $api->get("/category/{id}",NoteCategoryController::class . "@cateGoryDetail");
         });
 
     });

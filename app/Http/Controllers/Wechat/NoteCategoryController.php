@@ -9,19 +9,34 @@
 namespace App\Http\Wechat;
 
 
+use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Http\Service\FollowService;
 use App\Http\Service\NoteCategoryService;
+use App\Http\Service\NoteService;
+use App\Models\Follow;
+use App\Models\Note;
+use App\Models\NoteCategory;
+use App\Models\OperateStatistics;
 use App\Models\User;
 
 class NoteCategoryController extends Controller
 {
     private $categoryService;
+    private $noteService;
 
-    public function __construct(NoteCategoryService $categoryService)
+    public function __construct(NoteCategoryService $categoryService,NoteService $noteService)
     {
         $this->categoryService = $categoryService;
+        $this->noteService = $noteService;
     }
 
+    /**
+     * 获取我的笔记簿
+     *
+     * @author yezi
+     * @return \Illuminate\Database\Eloquent\Collection|void|static[]
+     */
     public function myCategories()
     {
         $user = request()->input("user");
@@ -35,37 +50,30 @@ class NoteCategoryController extends Controller
         return $list;
     }
 
-    /**
-     * 笔记列表
-     *
-     * @author yezi
-     * @return array
-     */
-    public function noteCategoryList()
+    public function cateGoryDetail($categoryId)
     {
-        $orderBy = request()->input('order_by', 'created_at');
-        $sortBy = request()->input('sort_by', 'desc');
-        $filter = request()->input('filter');
-        $pageSize = request()->input('page_size', 10);
-        $pageNumber = request()->input('page_number', 1);
+        $user = request()->input("user");
 
-        $pageParams = ['page_size' => $pageSize, 'page_number' => $pageNumber];
+        $category = $this->categoryService->getCategory($categoryId);
+        if(!$category){
+            throw new ApiException("笔记簿不存在");
+        }
 
-        /*$selectData = [
-            CollegeArticle::FIELD_ID,
-            CollegeArticle::FIELD_ID_POSTER,
-            CollegeArticle::FIELD_COVER_IMAGE,
-            CollegeArticle::FIELD_TITLE,
-            CollegeArticle::FIELD_CREATED_AT,
-            CollegeArticle::FIELD_CONTENT
-        ];
-        $query = $this->collegeService->getBuilder()->filter($type)->sort($orderBy,$sortBy)->done();
-        $result = paginate($query,$pageParams,$selectData,function ($item){
-            $item = $this->collegeService->formatSingle($item);
+        $category->follow_category = app(FollowService::class)->checkFollow($user->id,$category->id,Follow::ENUM_TYPE_CATEGORY);
+        $category->follow_author = app(FollowService::class)->checkFollow($user->id,$category->{NoteCategory::FIELD_ID_POSTER},Follow::ENUM_TYPE_AUTHOR);
+
+        $category->notes = collect($this->noteService->getNotesByCategoryId($categoryId))->map(function ($item){
+            $static = $item->{Note::REL_STATICS};
+            if($static){
+                $item->view = $static->{OperateStatistics::FIELD_VIEW};
+                $item = collect($item)->forget(Note::REL_STATICS)->all();
+            }else{
+                $item->view = 0;
+            }
             return $item;
         });
 
-        return $result;*/
+        return $category;
     }
 
 }

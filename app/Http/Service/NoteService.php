@@ -217,7 +217,8 @@ class NoteService
             ->select([
                 Model::FIELD_ID,
                 Model::FIELD_TITLE,
-                Model::FIELD_CREATED_AT
+                Model::FIELD_CREATED_AT,
+                Model::FIELD_ATTACHMENTS
             ])
             ->get();
 
