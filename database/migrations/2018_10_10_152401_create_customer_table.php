@@ -24,6 +24,8 @@ class CreateCustomerTable extends Migration
             $table->string("salt",12)->default("")->comment("盐");
             $table->string("remember_token")->default()->comment("记住密码token");
 
+            $table->string("donation_qr_code")->default("")->comment("赞赏码");
+
             $table->timestamp('created_at')->nullable()->index();
             $table->timestamp('updated_at')->nullable();
             $table->softDeletes();

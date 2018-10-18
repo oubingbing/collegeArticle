@@ -38,6 +38,8 @@ class Customer extends Authenticatable
 
     const FIELD_REMEMBER_TOKEN = 'remember_token';
 
+    const FIELD_DONATION_QR_CODE = 'donation_qr_code';
+
     /** field created_at */
     const FIELD_CREATED_AT = 'created_at';
 
@@ -55,6 +57,7 @@ class Customer extends Authenticatable
         self::FIELD_PHONE,
         self::FIELD_PASSWORD,
         self::FIELD_SALT,
-        self::FIELD_REMEMBER_TOKEN
+        self::FIELD_REMEMBER_TOKEN,
+        self::FIELD_DONATION_QR_CODE
     ];
 }

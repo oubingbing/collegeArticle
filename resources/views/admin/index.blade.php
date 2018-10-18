@@ -155,7 +155,7 @@
         background-color:#F2F2F2;
     }
 
-    [v-cloak] {
+    :global[v-cloak] {
         display: none;
     }
 
@@ -274,19 +274,24 @@
         margin-right: 10px;
     }
 
-    .cover-container .delete-container{
+    .delete-container{
         width: 100px;
         height: 100px;
-        z-index: 20;
+        z-index: 330;
         position: absolute;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         background:rgba(2,2,2,0.6);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
+        border-radius: 5px;
+        border-radius: 5px;
         color: #009688;
+    }
+
+    .delete-container img{
+        width: 30px;
+        height: 30px;
     }
 
     .note-div{
@@ -316,10 +321,99 @@
         align-items: center;
     }
 
+    .setting-container{
+        width: 50%;
+        height: 50%;
+        display: flex;
+        flex-direction: column;
+        position: fixed;
+        z-index: 300;
+        background: white;
+        top: 20%;
+        left: 25%;
+        box-shadow: darkgrey 10px 10px 30px 5px ;
+    }
+
+    .setting-container .setting-content{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px 10px;
+    }
+
+    .setting-content .setting-donation{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        height: 150px;
+    }
+
+    .setting-donation .donation-label{
+        width: 10%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .setting-donation .donation-code{
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .donation-code img{
+        width: 100px;
+        height: 100px;
+        margin-right: 10px;
+    }
+
+    .code-container{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+    }
+
+    .setting-content .header{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    .header img{
+        width: 20px;
+        height: 20px;
+    }
+
 </style>
 @section('content')
 <body>
 <div id="app">
+
+    <div class="setting-container" v-if="showSetting" v-cloak>
+        <div class="setting-content" v-cloak>
+            <div class="header">
+                <img src="{{asset('images/close.png')}}" alt="" v-on:click="hiddenSetting()">
+            </div>
+            <div class="setting-donation">
+                <div class="donation-label">
+                    <div>赞赏码</div>
+                </div>
+                <div class="donation-code">
+                    <div class="code-container">
+                        <img  v-bind:src="donationQrCode"
+                              alt="" v-if="donationQrCode" onclick="javascript:$('#cover-picture').click()" v-if="showSelectQrCode">
+                        <img src="{{asset('images/select-image.png')}}" alt="" onclick="javascript:$('#cover-picture').click()" v-if="showSelectQrCode">
+                    </div>
+                    <input type="file" id="cover-picture" style="display: none" class="layui-input" @change="selectDonationQrCode($event)"/>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 顶部开始 -->
     <div class="container" style="background: #009688">
         <div class="logo"><a href="./index.html">灯塔笔记</a></div>
@@ -327,13 +421,14 @@
             <i title="展开左侧栏" class="iconfont">&#xe699;</i>
         </div>
         <ul class="layui-nav right" lay-filter="">
+            <li class="layui-nav-item to-index"><a href="/">前台首页</a></li>
           <li class="layui-nav-item">
             <a href="javascript:;">{{$nickname}}</a>
             <dl class="layui-nav-child"> <!-- 二级菜单 -->
               <dd><a href="{{asset('logout')}}">退出</a></dd>
             </dl>
           </li>
-          <li class="layui-nav-item to-index"><a href="/">前台首页</a></li>
+            <li class="layui-nav-item to-index" v-on:click="showSettingDiv"><a href="javascript:;">设置</a></li>
         </ul>
 
     </div>
@@ -477,7 +572,7 @@
     </div>
     <div class="page-content-bg"></div>
     <!-- 右侧主体结束 -->
-    <!-- 中部结束 -->
+
     <!-- 底部开始 -->
     <div class="footer">
         <div class="copyright">@2016-2018 大学灯塔 | 粤ICP备16004706号-1</div>

@@ -39,6 +39,10 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware'=>['web']],
 
         /** 重命名日志 **/
         Route::post("note/{id}/rename","NoteController@editTitle");
+
+        Route::post("setting_donation","IndexController@setDonationQrCode");
+
+        Route::get("donation_qr_code","IndexController@getDonationQrCode");
     });
 });
 

@@ -54,4 +54,16 @@ class CustomerService
     {
         return Model::find($id);
     }
+
+    public function updateDonationQrCode($customerId,$url)
+    {
+        $customer = $this->getCustomerById($customerId);
+        if(!$customer){
+            throw new WebException("用户不存在");
+        }
+
+        $customer->{Customer::FIELD_DONATION_QR_CODE} = $url;
+        $result = $customer->save();
+        return $result;
+    }
 }

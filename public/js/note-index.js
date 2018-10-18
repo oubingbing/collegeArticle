@@ -17,11 +17,15 @@ new Vue({
         showSave:false,
         showRenameCategory:false,
         renameCategoryValue:'',
-        renameNoteValue:''
+        renameNoteValue:'',
+        donationQrCode:'',
+        showSetting:false,
+        showSelectQrCode:false
     },
     created:function () {
         this.getCategories();
         let _this = this;
+        this.showSetting = false;
         setTimeout(function () {
             _this.showMd = false;
         },1000)
@@ -471,14 +475,25 @@ new Vue({
          *
          * @param event
          */
-        selectCoverPicture:function (event) {
+        selectDonationQrCode:function (event) {
             let file = event.target.files[0];
             let imageArray = this.coverPictures;
             let _this = this;
 
             uploadPicture(file,function (res) {
-                imageArray.push({image:IMAGE_URL+res.key,name:file.name,show:false});
-                _this.coverPictures = imageArray;
+                axios.post(`admin/setting_donation`,{url:IMAGE_URL+res.key}).then( response=> {
+                    console.log(res.data);
+                    if(response.data.code == 500){
+                        layer.msg(response.data.message);
+                    }else{
+                        console.log(IMAGE_URL+res.key)
+                        _this.donationQrCode = IMAGE_URL+res.key;
+                        _this.showSelectQrCode = false;
+                    }
+                }).catch(function (error) {
+                    console.log(error);
+                });
+
             },function (res) {
                 //var total = res.total;
                 console.log(res)
@@ -486,6 +501,29 @@ new Vue({
                 layer.msg("添加图片失败");
             },ZONE);
 
+        },
+
+        showSettingDiv:function () {
+            this.showSetting = true;
+            let _this = this;
+            axios.get(`admin/donation_qr_code`,{}).then( res=> {
+                if(res.data.code == 500){
+                    layer.msg(res.data.message);
+                }else{
+                    _this.donationQrCode = res.data;
+                    if(_this.donationQrCode){
+                        _this.showSelectQrCode = false;
+                    }else{
+                        _this.showSelectQrCode = true;
+                    }
+                }
+            }).catch(function (error) {
+                console.log(error);
+            });
+        },
+
+        hiddenSetting:function () {
+            this.showSetting = false;
         },
 
         /**
@@ -649,6 +687,6 @@ new Vue({
             }).catch(function (error) {
                 console.log(error);
             });
-        }
+        },
     }
 });
