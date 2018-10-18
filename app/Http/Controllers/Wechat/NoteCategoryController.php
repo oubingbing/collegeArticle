@@ -11,9 +11,11 @@ namespace App\Http\Wechat;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Http\Service\CustomerService;
 use App\Http\Service\FollowService;
 use App\Http\Service\NoteCategoryService;
 use App\Http\Service\NoteService;
+use App\Models\Customer;
 use App\Models\Follow;
 use App\Models\Note;
 use App\Models\NoteCategory;
@@ -108,6 +110,25 @@ class NoteCategoryController extends Controller
         });
 
         return $result;
+    }
+
+    public function getUserCategory($id)
+    {
+        $user = request()->input("user");
+
+        $customer = app(CustomerService::class)->getCustomerById($id);
+        if(!$customer){
+            throw new ApiException("用户不存在");
+        }
+
+        $resUser["id"] = $customer->id;
+        $resUser["nickname"] = $customer->{Customer::FIELD_NICKNAME};
+        $resUser["avatar"] = $customer->{Customer::FIELD_AVATAR};
+        $resUser["follow_number"] = app(FollowService::class)->countUserFollowById($customer->id);
+        $resUser['follow_author'] = app(FollowService::class)->checkFollow($user->id,$customer->id,Follow::ENUM_TYPE_AUTHOR);
+        $resUser["categories"] = $this->categoryService->getMyCategories($id);
+
+        return $resUser;
     }
 
 }

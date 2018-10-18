@@ -91,4 +91,12 @@ class FollowService
 
         return $item;
     }
+
+    public function countUserFollowById($objId)
+    {
+        return Model::query()
+            ->where(Model::FIELD_ID_OBJ,$objId)
+            ->where(Model::FIELD_TYPE,Model::ENUM_TYPE_AUTHOR)
+            ->count();
+    }
 }

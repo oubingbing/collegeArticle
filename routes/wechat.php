@@ -93,6 +93,8 @@ $api->version('v1', function ($api) {
             $api->get("/bind_user_info",UserController::class . '@bindUserInfo');
 
             $api->get("/donation_code",UserController::class . '@getDonationQrCode');
+
+            $api->get("/user/{id}/category",NoteCategoryController::class . '@getUserCategory');
         });
 
     });

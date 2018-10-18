@@ -51,7 +51,7 @@ class ViewLogService
     {
         $result = Model::query()
             ->with([Model::REL_NOTE=>function($query){
-                $query->select([
+                $query->with([Note::REL_POSTER])->select([
                     Note::FIELD_ID,
                     Note::FIELD_TITLE,
                     Note::FIELD_ID_POSTER,
