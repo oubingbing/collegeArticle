@@ -9,6 +9,8 @@
 namespace App\Models;
 
 
+use Illuminate\Support\Carbon;
+
 class Note extends BaseModel
 {
     const TABLE_NAME = 'notes';
@@ -67,7 +69,8 @@ class Note extends BaseModel
         self::FIELD_ATTACHMENTS,
         self::FIELD_USE_TYPE,
         self::FIELD_TYPE,
-        self::FIELD_STATUS
+        self::FIELD_STATUS,
+        self::FIELD_CREATED_AT
     ];
 
     public function poster()
@@ -89,6 +92,11 @@ class Note extends BaseModel
     {
         return $this->hasOne(OperateStatistics::class,OperateStatistics::FIELD_ID_OBJ,self::FIELD_ID)
             ->where(OperateStatistics::FIELD_TYPE,OperateStatistics::ENUM_TYPE_NOTE);
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
     }
 
 }

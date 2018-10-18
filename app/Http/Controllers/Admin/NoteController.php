@@ -154,7 +154,7 @@ class NoteController extends Controller
         try{
             \DB::beginTransaction();
 
-            $result = $this->noteService->updateContent($content,$attachments,$note);
+            $result = $this->noteService->updateContent($content,collect($attachments)->toArray(),$note);
             if(!$result){
                 throw new WebException("保存失败",500);
             }

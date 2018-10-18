@@ -56,7 +56,8 @@ class ViewLogService
                     Note::FIELD_TITLE,
                     Note::FIELD_ID_POSTER,
                     Note::FIELD_ID_CATEGORY,
-                    Note::FIELD_ATTACHMENTS
+                    Note::FIELD_ATTACHMENTS,
+                    Note::FIELD_CREATED_AT
                 ]);
             }])
             ->where(Model::FIELD_ID_USER,$userId)

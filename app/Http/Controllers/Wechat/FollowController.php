@@ -148,12 +148,13 @@ class FollowController extends Controller
                         Note::FIELD_TITLE,
                         Note::FIELD_ID_POSTER,
                         Note::FIELD_ID_CATEGORY,
-                        Note::FIELD_ATTACHMENTS
+                        Note::FIELD_ATTACHMENTS,
+                        Note::FIELD_CREATED_AT
                     ]);
                 }
             ]);
         $list = paginate($builder,$pageParams,"*",function ($item){
-            $item->view_number = app(ViewLogService::class)->getViewNumber($item);
+            $item->view_number = app(ViewLogService::class)->getViewNumber($item->{Follow::FIELD_ID_OBJ});
             return $item;
         });
         return $list;

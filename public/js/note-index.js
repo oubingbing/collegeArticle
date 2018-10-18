@@ -347,11 +347,6 @@ new Vue({
             let _this = this;
             this.note.content = editorMd.getValue();
             let attachments = this.getMarkdownPicture(this.note.content);
-            attachments = attachments.filter(function (item,index) {
-                if(index<=2){
-                    return item;
-                }
-            });
 
             axios.post(`admin/note/update/${this.note.id}`,{content:this.note.content,attachments:attachments}).then( res=> {
                 console.log(res.data);

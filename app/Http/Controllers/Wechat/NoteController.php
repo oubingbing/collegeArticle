@@ -69,8 +69,6 @@ class NoteController extends Controller
                 ]);
             }]);
         $result = paginate($query,$pageParams,$selectData,function ($item){
-            //Carbon::setLocale('zh');
-            //$item["created_at"] = Carbon::parse($item["created_at"])->diffForHumans();
             return $item;
         });
 

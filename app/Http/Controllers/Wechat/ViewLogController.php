@@ -83,7 +83,7 @@ class ViewLogController extends Controller
 
         $builder = $this->viewService->getBuilder($user->id,ViewLog::ENUM_TYPE_NOTE);
         $list = paginate($builder,$pageParams,"*",function ($item){
-            $item->view_number = $this->viewService->getViewNumber($item);
+            $item->view_number = $this->viewService->getViewNumber($item->{ViewLog::FIELD_ID_OBJ});
             return $item;
         });
         return $list;

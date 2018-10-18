@@ -589,7 +589,7 @@
 <script src="{{asset('lib/sequence-diagram.min.js')}}"></script>
 <script src="{{asset('lib/flowchart.min.js')}}"></script>
 <script src="{{asset('lib/jquery.flowchart.min.js')}}"></script>
-<script type="text/javascript" src="{{asset('js/note-index.js')}}"></script>
+<script type="text/javascript" src="{{asset('js/note-index.js?v=1.0.0')}}"></script>
 <script type="text/javascript">
     'use strict';
     const token = "{{$token}}";
