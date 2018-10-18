@@ -75,7 +75,8 @@ class Note extends BaseModel
         return $this->belongsTo(Customer::class,self::FIELD_ID_POSTER,Customer::FIELD_ID)->select([
             Customer::FIELD_ID,
             Customer::FIELD_NICKNAME,
-            Customer::FIELD_AVATAR
+            Customer::FIELD_AVATAR,
+            Customer::FIELD_DONATION_QR_CODE
         ]);
     }
 

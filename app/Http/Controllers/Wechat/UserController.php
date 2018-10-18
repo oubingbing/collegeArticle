@@ -166,4 +166,12 @@ class UserController extends Controller
             return $customer;
         }
     }
+
+    public function getDonationQrCode()
+    {
+        $user = request()->input('user');
+        $customer = $user->{User::REL_CUSTOMER};
+
+        return $customer->{Customer::FIELD_DONATION_QR_CODE};
+    }
 }
