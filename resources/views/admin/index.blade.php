@@ -155,8 +155,8 @@
         background-color:#F2F2F2;
     }
 
-    :global[v-cloak] {
-        display: none;
+    [v-cloak] {
+        display: none !important;
     }
 
     .fade-enter-active, .fade-leave-active {
