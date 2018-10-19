@@ -9,6 +9,12 @@
         flex-direction: column;
     }
 
+    ::-webkit-scrollbar {
+        width: 0;   /* 滚动条宽度为0 */
+        height: 0; /* 滚动条高度为0 */
+        display: none; /* 滚动条隐藏 */
+    }
+
     .create-header{
         width: 100%;
         display: flex;
@@ -34,11 +40,11 @@
 
     .create-container .my-dir{
         width: 100%;
-        height: 100%;
         display: flex;
         flex-direction: column;
         align-items: center;
-        background-color: white;
+        background: white;
+        padding-bottom: 750px;
     }
 
     .my-dir .title{
@@ -66,7 +72,7 @@
     }
 
     .note .note-item{
-        width: 90%;
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -114,10 +120,9 @@
     }
 
     .note-item .note-content{
-        width: 90%;
+        width: 100%;
         display: flex;
         flex-direction: column;
-        margin-top: 5px;
     }
 
     .note-content .content-title{
@@ -127,7 +132,14 @@
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
-        align-items: flex-start;
+        align-items: center;
+        border-top-style:solid;
+        border-width:1px;
+        border-color: gainsboro;
+    }
+
+    .note-content .title-border{
+        height: 60px;
     }
 
     .content-title img{
@@ -300,7 +312,7 @@
 
     .note-div,.renameNote-div{
         float: right;
-        width: 85%;
+        width: 100%;
         display: flex;
         flex-direction: row;
         overflow: hidden;
@@ -314,7 +326,7 @@
     }
 
     .edit-note{
-        width: 15%;
+        width: 10%;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
@@ -388,6 +400,18 @@
         height: 20px;
     }
 
+    .content-md{
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .content-md .viewMd{
+        width: 80%;
+    }
+
 </style>
 @section('content')
 <body>
@@ -447,10 +471,11 @@
                   <div class="note">
                       <div class="note-item" v-for="category in noteCategories">
                           <div class="note-title"
+                               v-on:click="showNoteList(category.id)"
                                 @mouseenter="enterNoteCategory(category.id)"
                                 @mouseleave="leaveNoteCategory()"
                                 v-bind:class="{moveCategory:category.showBackgroud}">
-                              <div class="title-left" v-on:click="showNoteList(category.id)" v-show="!category.showRenameCategory">
+                              <div class="title-left" v-show="!category.showRenameCategory">
                                   <div class="title-div">
                                       <img src="{{asset('images/book.png')}}" alt="">
                                       <span class="title-label">@{{ category.name }}</span>
@@ -474,12 +499,13 @@
                           </div>
                           <transition name="fade">
                               <div class="note-content" v-if="category.showNotes == true">
-                                  <div class="content-title"
+                                  <div style="" class="content-title title-border"
                                         @mouseenter="enterNote(category.id,note.id)"
                                         @mouseleave="leaveNote()"
-                                       v-bind:class="{tap:note.tap,enter:note.enter}"
-                                       v-for="note in category.notes">
-                                      <div class="note-div" v-show="!note.showRenameNote" v-on:click="openNote(category.id,note.id)">
+                                        v-bind:class="{tap:note.tap,enter:note.enter}"
+                                        v-on:click="openNote(category.id,note.id)"
+                                        v-for="note in category.notes">
+                                      <div class="note-div" v-show="!note.showRenameNote">
                                           <span v-bind:class="{titleColor:note.tap}">@{{ note.title }}</span>
                                       </div>
                                       <div class="renameNote-div" v-show="note.showRenameNote" @mouseleave="leaveNoteInput(note.id,category.id,note.title)">
@@ -559,11 +585,11 @@
             </div>
         </div>
         <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
-            <div class="content-body">
+            <div class="content-body content-md">
                 <div id="editormd" v-show="showMd">
                     <textarea style="display:none;"></textarea>
                 </div>
-                <div id="viewMd" style="height: 800px" v-show="!showMd">
+                <div id="viewMd" style="height: 900px" class="viewMd" v-show="!showMd">
                     <textarea style="display:none;"></textarea>
                 </div>
             </div>
