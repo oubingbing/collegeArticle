@@ -92,6 +92,7 @@
         align-items: center;
         cursor:pointer;
         padding: 10px;
+        height: 60px;
     }
 
     .note-title .title-left,.rename-div{
