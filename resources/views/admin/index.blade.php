@@ -411,6 +411,7 @@
 
     .content-md .viewMd{
         width: 80%;
+        margin-bottom: 50px;
     }
 
 </style>
