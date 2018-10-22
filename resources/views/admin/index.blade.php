@@ -92,7 +92,7 @@
         align-items: center;
         cursor:pointer;
         padding: 10px;
-        height: 60px;
+        height: 50px;
     }
 
     .note-title .title-left,.rename-div{
@@ -411,7 +411,10 @@
 
     .content-md .viewMd{
         width: 80%;
-        margin-bottom: 50px;
+    }
+
+    .md-container{
+        padding-bottom: 100px;
     }
 
 </style>
@@ -578,7 +581,7 @@
     <!-- <div class="x-slide_left"></div> -->
     <!-- 左侧菜单结束 -->
     <!-- 右侧主体开始 -->
-    <div class="page-content" v-cloak>
+    <div class="page-content" v-cloak >
         <div class="header-right" v-show="showDelete">
             <div class="operate-button">
                 <img src="{{asset('images/save.png')}}" alt="" v-on:click="saveEdit()" v-show="showSave">
@@ -586,7 +589,7 @@
                 <img src="{{asset('images/delete-icon.png')}}" alt="" v-show="showDelete" v-on:click="deleteNote()">
             </div>
         </div>
-        <div class="layui-tab tab" lay-filter="xbs_tab" lay-allowclose="false">
+        <div class="layui-tab tab md-container" lay-filter="xbs_tab" lay-allowclose="false">
             <div class="content-body content-md">
                 <div id="editormd" v-show="showMd">
                     <textarea style="display:none;"></textarea>
