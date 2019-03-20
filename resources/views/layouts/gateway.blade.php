@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ config('app.locale') }}">
 <head>
+    <meta name="keywords" content="bingshop,yuki,叶子,校园小情书,微信小程序商城,小程序商城,小程序开发者论坛,灯塔笔记,灯塔,笔记,yezi,bingshop安装教程">
+    <meta name="description" content="小程序爱好者，讨论自己热爱的代码人生，渴望像先辈们那样创造美好的事物">
+    <meta property="og:title" content="开源小程序社区论坛">
+    <meta property="og:description" content="渴望创造美好的事物">
+    <meta property="og:url" content="https://qiuhuiyi.cn">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
