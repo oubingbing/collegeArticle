@@ -31,6 +31,8 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="{{ asset('/') }}" style="color: white">首页</a></li>
+                    <li><a href="{{ asset('/') }}" style="color: white">bingshop</a></li>
+                    <li><a href="{{ asset('/') }}" style="color: white">校园小情书</a></li>
                     @if (session("customer_id"))
                         <li><a href="{{ asset('/admin') }}" style="color: white">{{session('customer_name')}}</a></li>
                         <li><a href="{{ asset('/admin') }}" style="color: white">控制台</a></li>
