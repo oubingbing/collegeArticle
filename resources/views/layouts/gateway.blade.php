@@ -55,7 +55,7 @@
 
     <footer class="footer navbar-fixed-bottom">
         <div class="container footer">
-            <a href="http://www.miitbeian.gov.cn/">@2016-2018 灯塔笔记 | 粤ICP备16004706号-1</a>
+            <a href="http://www.beian.miit.gov.cn">粤ICP备18097506号</a>
         </div>
     </footer>
 </div>
