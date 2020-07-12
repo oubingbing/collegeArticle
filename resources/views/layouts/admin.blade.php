@@ -13,11 +13,11 @@
     <link rel="shortcut icon" href="{{ asset('img/logo.jfif') }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ asset('css/font.css') }}">
     <link rel="stylesheet" href="{{ asset('css/xadmin.css') }}">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('lib/layui/layui.js') }}" charset="utf-8"></script>
     <script type="text/javascript" src="{{ asset('js/xadmin.js') }}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+    <script src="{{ asset('js/vue.min.js') }}"></script>
+    <script src="{{ asset('js/axios.min.js') }}"></script>
     <script>
         "use strict";
 
